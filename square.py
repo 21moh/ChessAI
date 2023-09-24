@@ -1,5 +1,4 @@
 import pygame
-import sys
 
 from const import *
 
@@ -31,9 +30,6 @@ class Square:
         if (piece == "pond"):
             if (self.team == "white"):
                 
-                
-                #if board[row][grid] diagonal is opposite piece... --> restudy your code.
-
                 if (row == 6):
                     self.moves.append([row-2, col])
                     self.moves.append([row-1, col])
@@ -51,14 +47,49 @@ class Square:
 
         ##########################################
         elif (piece == "bishop"):
-            
+
+            copy_row = self.row
+            copy_col = self.col
+
+            while (row > 0 and col > 0):
+                self.moves.append([row-1,col-1])
+                row = row - 1
+                col = col - 1
+
+            row = copy_row
+            col = copy_col
+            while (row > 0 and col < COLS):
+                self.moves.append([row-1, col+1])
+                row = row - 1
+                col = col + 1
+                
+            row = copy_row
+            col = copy_col
+            while (row < ROWS and col > 0):
+                self.moves.append([row+1, col-1])
+                row = row + 1
+                col = col - 1
+
+            row = copy_row
+            col = copy_col
+            while (row < ROWS and col < COLS):
+                self.moves.append([row+1, col+1])
+                row = row + 1
+                col = col + 1
+
+            row = copy_row
+            col = copy_col
 
             if (self.team == "white"):
+                pass
+
+            elif(self.team == "black"):
                 pass
 
         
         ##########################################
         elif (piece == "knight"):
+
             if (row-2 >= 0 and col-1 >= 0):
                     self.moves.append([row-2, col-1])
             if (row-2 >= 0 and col+1 <= COLS-1):
@@ -81,17 +112,100 @@ class Square:
 
         ##########################################
         elif (piece == "rook"):
-            pass
+            copy_row = self.row
+            copy_col = self.col
+
+            while (row > 0):
+                self.moves.append([row-1, col])
+                row = row - 1
+            row = copy_row
+
+            while (row < ROWS):
+                self.moves.append([row+1, col])
+                row = row + 1
+            row = copy_row
+
+            while (col > 0):
+                self.moves.append([row, col-1])
+                col = col - 1
+            col = copy_col
+
+            while (col < COLS):
+                self.moves.append([row, col+1])
+                col = col + 1
+            col = copy_col
 
 
         ##########################################
         elif (piece == "queen"):
-            pass
+            copy_row = self.row
+            copy_col = self.col
+
+            while (row > 0 and col > 0):
+                self.moves.append([row-1,col-1])
+                row = row - 1
+                col = col - 1
+
+            row = copy_row
+            col = copy_col
+            while (row > 0 and col < COLS):
+                self.moves.append([row-1, col+1])
+                row = row - 1
+                col = col + 1
+                
+            row = copy_row
+            col = copy_col
+            while (row < ROWS and col > 0):
+                self.moves.append([row+1, col-1])
+                row = row + 1
+                col = col - 1
+
+            row = copy_row
+            col = copy_col
+            while (row < ROWS and col < COLS):
+                self.moves.append([row+1, col+1])
+                row = row + 1
+                col = col + 1
+
+            row = copy_row
+            col = copy_col
+
+            while (row > 0):
+                self.moves.append([row-1, col])
+                row = row - 1
+            row = copy_row
+
+            while (row < ROWS):
+                self.moves.append([row+1, col])
+                row = row + 1
+            row = copy_row
+
+            while (col > 0):
+                self.moves.append([row, col-1])
+                col = col - 1
+            col = copy_col
+
+            while (col < COLS):
+                self.moves.append([row, col+1])
+                col = col + 1
+            col = copy_col
 
 
         ##########################################
         elif (piece == "king"):
-            pass
+            if (row > 0 and col > 0):
+                self.moves.append([row-1, col-1])
+                self.moves.append([row-1, col])
+                self.moves.append([row, col-1])
+            if (row < ROWS and col < COLS):
+                self.moves.append([row+1, col+1])
+                self.moves.append([row+1, col])
+                self.moves.append([row, col+1])
+            if (row > 0 and col < COLS):
+                self.moves.append([row-1, col+1])
+            if (row < ROWS and col > 0):
+                self.moves.append([row+1, col-1])
+                
 
 
     

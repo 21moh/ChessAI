@@ -26,16 +26,17 @@ class Main:
         running = True
         game.board.initialize_board()
 
-       # clock = pygame.time.Clock()
 
-       # FPS = 60
 
         while running:
-          #  clock.tick(FPS)
             game.show_board(screen)
             game.show_pieces(screen)
             
             #  if turn == white     ->> HUMAN SECTION  
+
+            if dragger.dragging == True:
+                dragger.update_mouse(event.pos)
+                dragger.update_blit(screen)
 
 
             for event in pygame.event.get():
@@ -45,6 +46,8 @@ class Main:
                     pygame.quit()  # Quit Pygame properly
                     sys.exit()     # exit program quit game
                 
+                
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     dragger.update_mouse(event.pos)
 
@@ -55,15 +58,15 @@ class Main:
                         dragger.save_object(game.board.grid[clicked_row][clicked_col])
                         dragger.save_initial(event.pos)
                         dragger.drag_piece(game.board.grid[clicked_row][clicked_col])        # gets specific piece on square 
-                    
-
-                        
+                        #dragger.hover()
 
 
                 if event.type == pygame.MOUSEMOTION:
-                    if dragger.dragging == True:
-                        dragger.update_mouse(event.pos)
-                        dragger.update_blit(screen)
+                    pass
+                    
+                    #if dragger.dragging == True:
+                    #    dragger.update_mouse(event.pos)
+                    #    dragger.update_blit(screen)
 
 
 
@@ -98,7 +101,7 @@ class Main:
                                 game.board.grid[clicked_row][clicked_col].moves = []
                                 game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
 
-
+                        
 
                                 print(game.board.grid[clicked_row][clicked_col].piece)
                                 

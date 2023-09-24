@@ -33,7 +33,7 @@ class Game:
             for j in range(COLS):
                 if (board.grid[i][j].piece != None):
 
-                    # change if condition when you change how you use Square / Piece Object
+                    # change if condition when you change how you use Square  Object
                     if board.grid[i][j] != self.dragger.object:
                         original_image = pygame.image.load(board.grid[i][j].image)
                         original_width, original_height = original_image.get_size()
