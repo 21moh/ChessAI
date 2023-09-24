@@ -3,18 +3,19 @@ import sys
 
 from const import *
 from board import Board
+from dragger import Dragger
+
 
 class Game:
     def __init__(self):
         self.turn = "White"
         self.board = Board()
-        #self.dragger = Dragger()
+        self.dragger = Dragger()
     
     def show_board(self, screen):
-        
         screen.fill((200, 200, 200))  # White background
 
-        # Draw the grid and pieces
+        # Draw the background board
         for row in range(8):
             for col in range(8):
                 x = col * CELL_SIZE
@@ -30,21 +31,27 @@ class Game:
         board = self.board
         for i in range(ROWS):
             for j in range(COLS):
-                if (board[i][j].hasPiece):
-                    piece = board[i][j].
-                    
-                    original_image = pygame.image.load(piece.image)
-                    original_width, original_height = original_image.get_size()
+                if (board.grid[i][j].piece != None):
 
-                    spacing_factor = 0.9
+                    # change if condition when you change how you use Square / Piece Object
+                    if board.grid[i][j] != self.dragger.object:
+                        original_image = pygame.image.load(board.grid[i][j].image)
+                        original_width, original_height = original_image.get_size()
 
-                    # Calculate the scaling factors
-                    width_scale = CELL_SIZE * spacing_factor / original_width
-                    height_scale = CELL_SIZE * spacing_factor / original_height
+                        spacing_factor = 0.9
 
-                    # Use the smaller scaling factor to maintain aspect ratio
-                    scale_factor = min(width_scale, height_scale)
+                        # Calculates scaling factors
+                        width_scale = CELL_SIZE * spacing_factor / original_width
+                        height_scale = CELL_SIZE * spacing_factor / original_height
 
-                    # Scale the image
-                    piece.image = pygame.transform.scale(original_image, (int(original_width * scale_factor), int(original_height * scale_factor)))
-    
+                        # Use the smaller scaling factor to maintain aspect ratio
+                        scale_factor = min(width_scale, height_scale)
+
+                        # Scales the image
+                        new_image = pygame.transform.scale(original_image, (int(original_width * scale_factor), int(original_height * scale_factor)))
+                        
+                        x = j * CELL_SIZE
+                        y = i * CELL_SIZE
+                        img_x = x + (CELL_SIZE - new_image.get_width()) // 2
+                        img_y = y + (CELL_SIZE - new_image.get_height()) // 2
+                        screen.blit(new_image, (img_x, img_y))
