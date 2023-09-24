@@ -3,13 +3,15 @@ import sys
 
 from const import *
 from game import Game
+from square import Square
+
 
 class Main:
     
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Chess')
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT)) #, pygame.HWSURFACE
         self.game = Game()
 
     def mainloop(self):
@@ -22,12 +24,20 @@ class Main:
         #draw board while running
 
         running = True
+        game.board.initialize_board()
+
+       # clock = pygame.time.Clock()
+
+       # FPS = 60
 
         while running:
-            game.board.initialize_board()
+          #  clock.tick(FPS)
             game.show_board(screen)
             game.show_pieces(screen)
             
+            #  if turn == white     ->> HUMAN SECTION  
+
+
             for event in pygame.event.get():
                 
                 if event.type == pygame.QUIT:
@@ -35,27 +45,75 @@ class Main:
                     pygame.quit()  # Quit Pygame properly
                     sys.exit()     # exit program quit game
                 
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     dragger.update_mouse(event.pos)
 
                     clicked_row = dragger.mouseY // CELL_SIZE
                     clicked_col = dragger.mouseX // CELL_SIZE
 
-                    if game.board.grid[clicked_row][clicked_col].piece != None:
-                        piece = game.board.grid[clicked_row][clicked_col].piece
+                    if game.board.grid[clicked_row][clicked_col].piece != None:         # or opponent piece condition
+                        dragger.save_object(game.board.grid[clicked_row][clicked_col])
                         dragger.save_initial(event.pos)
-                        dragger.drag_piece(piece)
+                        dragger.drag_piece(game.board.grid[clicked_row][clicked_col])        # gets specific piece on square 
+                    
 
-                elif event.type == pygame.MOUSEMOTION:
-                    if dragger.dragging:
-                        dragger.update_mouse(screen)
+                        
+
+
+                if event.type == pygame.MOUSEMOTION:
+                    if dragger.dragging == True:
+                        dragger.update_mouse(event.pos)
                         dragger.update_blit(screen)
 
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    dragger.undrag_piece
 
 
-            pygame.display.update()
+
+                if event.type == pygame.MOUSEBUTTONUP:
+                    dragger.dragging = False
+                    dragger.piece = None
+                    dragger.object = None
+                    # check for valid move:
+
+                    #if valid move -->
+                    clicked_row = dragger.mouseY // CELL_SIZE
+                    clicked_col = dragger.mouseX // CELL_SIZE
+                    if (clicked_row < ROWS and clicked_col < COLS):
+                        if game.board.grid[clicked_row][clicked_col].piece == None and clicked_row < ROWS and clicked_col < COLS:
+
+                            # check if move is valid
+                            game.board.grid[dragger.initial_row][dragger.initial_col].get_moves()               # gets all possible moves for piece
+                            possible_moves = game.board.grid[dragger.initial_row][dragger.initial_col].moves    # returns list of all possible moves for piece
+                            result = possible_moves.count([clicked_row, clicked_col])
+                            print(possible_moves)
+                            print(result)
+                            if result >= 1:
+
+                                # put clicked object in new location
+                                
+
+                                # copy all piece information into new Square and Piece
+                                game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                game.board.grid[clicked_row][clicked_col].moves = []
+                                game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+
+
+
+                                print(game.board.grid[clicked_row][clicked_col].piece)
+                                
+                                game.show_board(screen)
+                                game.show_pieces(screen)
+
+                            game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+
+
+
+
+            # if turn equals black --> AI SECTION
+
+
+            pygame.display.flip()
 
 
     
