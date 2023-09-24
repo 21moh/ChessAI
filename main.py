@@ -26,7 +26,7 @@ class Main:
         running = True
         game.board.initialize_board()
 
-
+        turn = "white"
 
         while running:
             game.show_board(screen)
@@ -35,6 +35,7 @@ class Main:
             #  if turn == white     ->> HUMAN SECTION  
 
             if dragger.dragging == True:
+                
                 dragger.update_mouse(event.pos)
                 dragger.update_blit(screen)
 
@@ -58,59 +59,76 @@ class Main:
                         dragger.save_object(game.board.grid[clicked_row][clicked_col])
                         dragger.save_initial(event.pos)
                         dragger.drag_piece(game.board.grid[clicked_row][clicked_col])        # gets specific piece on square 
-                        #dragger.hover()
-
-
-                if event.type == pygame.MOUSEMOTION:
-                    pass
-                    
-                    #if dragger.dragging == True:
-                    #    dragger.update_mouse(event.pos)
-                    #    dragger.update_blit(screen)
-
 
 
 
                 if event.type == pygame.MOUSEBUTTONUP:
-                    dragger.dragging = False
-                    dragger.piece = None
-                    dragger.object = None
-                    # check for valid move:
+                    if dragger.piece != None:
+                        clicked_row = dragger.mouseY // CELL_SIZE
+                        clicked_col = dragger.mouseX // CELL_SIZE
 
-                    #if valid move -->
-                    clicked_row = dragger.mouseY // CELL_SIZE
-                    clicked_col = dragger.mouseX // CELL_SIZE
-                    if (clicked_row < ROWS and clicked_col < COLS):
-                        if game.board.grid[clicked_row][clicked_col].piece == None and clicked_row < ROWS and clicked_col < COLS:
-
-                            # check if move is valid
-                            game.board.grid[dragger.initial_row][dragger.initial_col].get_moves()               # gets all possible moves for piece
-                            possible_moves = game.board.grid[dragger.initial_row][dragger.initial_col].moves    # returns list of all possible moves for piece
-                            result = possible_moves.count([clicked_row, clicked_col])
-                            print(possible_moves)
-                            print(result)
-                            if result >= 1:
-
-                                # put clicked object in new location
-                                
-
-                                # copy all piece information into new Square and Piece
-                                game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
-                                game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                game.board.grid[clicked_row][clicked_col].col = clicked_col
-                                game.board.grid[clicked_row][clicked_col].moves = []
-                                game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-
+                        # creates all possible move locations with piece
+                        game.board.grid[dragger.initial_row][dragger.initial_col].moves = game.board.get_moves(dragger.piece.piece, dragger.initial_row, dragger.initial_col, dragger.piece.team)
                         
 
-                                print(game.board.grid[clicked_row][clicked_col].piece)
                                 
-                                game.show_board(screen)
-                                game.show_pieces(screen)
+                        print(game.board.grid[dragger.initial_row][dragger.initial_col].moves)
 
-                            game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+                        #implement move refiner --> checks for blocked moves in the list
+
+                        # checks if move is possible from the move list
+                        result = (game.board.grid[dragger.initial_row][dragger.initial_col].moves).count([clicked_row, clicked_col])
+
+                        if (clicked_row < ROWS and clicked_col < COLS):
+                            if (result >= 1):                           # player drops piece into valid square
+                                if (game.board.grid[dragger.initial_row][dragger.initial_col].team == "white" and game.board.grid[clicked_row][clicked_col].team == "black"):   #capture from white
+                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+
+                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
 
 
+                                    
+                                if (game.board.grid[dragger.initial_row][dragger.initial_col].team == "black" and game.board.grid[clicked_row][clicked_col].team == "white"):   #capture from black
+                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+
+                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+
+
+                            
+
+
+                                if game.board.grid[clicked_row][clicked_col].piece == None and clicked_row < ROWS and clicked_col < COLS:
+
+                                    # check if move is valid
+                                    
+                                    print(result)
+
+
+                                    # copy all piece information into new Square and Piece
+                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+
+                            
+
+                                    print(game.board.grid[clicked_row][clicked_col].piece)
+                                    
+
+                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+
+                        dragger.dragging = False
+                        dragger.piece = None
+                        dragger.object = None
 
 
             # if turn equals black --> AI SECTION

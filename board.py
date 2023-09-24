@@ -40,23 +40,36 @@ class Board:
         grid[7][4].add_piece("white", "king", "whiteKing.png", 7, 4)
 
 
-    def get_moves(self, piece, row, col):
+    def capture(self, piece):
+        pass
+
+    def get_moves(self, piece, row, col, team):
+        self.row = row
+        self.col = col
+        self.team = team
+        moves = []
+
         if (piece == "pond"):
             if (self.team == "white"):
                 
                 if (row == 6):
-                    self.moves.append([row-2, col])
-                    self.moves.append([row-1, col])
-                elif (row >= 1 and row <= 5):
-                    self.moves.append([row-1, col])
+                    moves.append([row-2, col])
+                    moves.append([row-1, col])
+                if (row >= 1 and row <= 5):
+                    moves.append([row-1, col])
+                if (row >= 1 and row <= 5 and col > 0 and col < COLS):  # Capturing
+                    if (self.grid[row-1][col-1].piece != None):
+                        moves.append([row-1, col-1])
+                    if (self.grid[row-1][col+1].piece != None):
+                        moves.append([row-1, col+1])
                 
 
             elif (self.team == "black"):
                 if (row == 1):
-                    self.moves.append([row+2, col])
-                    self.moves.append([row+1, col])
+                    moves.append([row+2, col])
+                    moves.append([row+1, col])
                 elif (row >= 2 and row <= 6):
-                    self.moves.append([row+1, col])
+                    moves.append([row+1, col])
 
 
         ##########################################
@@ -66,30 +79,38 @@ class Board:
             copy_col = self.col
 
             while (row > 0 and col > 0):
-                self.moves.append([row-1,col-1])
                 row = row - 1
                 col = col - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
 
             row = copy_row
             col = copy_col
-            while (row > 0 and col < COLS):
-                self.moves.append([row-1, col+1])
+            while (row > 0 and col < COLS-1):
                 row = row - 1
                 col = col + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
                 
             row = copy_row
             col = copy_col
-            while (row < ROWS and col > 0):
-                self.moves.append([row+1, col-1])
+            while (row < ROWS-1 and col > 0):
                 row = row + 1
                 col = col - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
 
             row = copy_row
             col = copy_col
-            while (row < ROWS and col < COLS):
-                self.moves.append([row+1, col+1])
+            while (row < ROWS-1 and col < COLS-1):
                 row = row + 1
                 col = col + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
 
             row = copy_row
             col = copy_col
@@ -105,21 +126,21 @@ class Board:
         elif (piece == "knight"):
 
             if (row-2 >= 0 and col-1 >= 0):
-                    self.moves.append([row-2, col-1])
+                moves.append([row-2, col-1])
             if (row-2 >= 0 and col+1 <= COLS-1):
-                self.moves.append([row-2, col+1])
+                moves.append([row-2, col+1])
             if (row-1 >= 0 and col-2 >= 0):
-                self.moves.append([row-1, col-2])
+                moves.append([row-1, col-2])
             if (row+1 <= ROWS-1 and col-2 >= 0):
-                self.moves.append([row+1, col-2])
+                moves.append([row+1, col-2])
             if (row+2 <= ROWS-1 and col-1 >= 0):
-                self.moves.append([row+2, col-1])
+                moves.append([row+2, col-1])
             if (row+2 <= ROWS-1 and col+1 <= COLS-1):
-                self.moves.append([row+2, col+1])
+                moves.append([row+2, col+1])
             if (row+1 <= ROWS-1 and col+2 <= COLS-1):
-                self.moves.append([row+1, col+2])
+                moves.append([row+1, col+2])
             if (row-1 >=0 and col+2 <= COLS-1):
-                self.moves.append([row-1, col+2])
+                moves.append([row-1, col+2])
 
             if (self.team == "white"):
                 pass
@@ -130,23 +151,31 @@ class Board:
             copy_col = self.col
 
             while (row > 0):
-                self.moves.append([row-1, col])
                 row = row - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             row = copy_row
 
-            while (row < ROWS):
-                self.moves.append([row+1, col])
+            while (row < ROWS-1):
                 row = row + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             row = copy_row
 
             while (col > 0):
-                self.moves.append([row, col-1])
                 col = col - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             col = copy_col
-
-            while (col < COLS):
-                self.moves.append([row, col+1])
+            
+            while (col < COLS-1):
                 col = col + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             col = copy_col
 
 
@@ -156,67 +185,84 @@ class Board:
             copy_col = self.col
 
             while (row > 0 and col > 0):
-                self.moves.append([row-1,col-1])
                 row = row - 1
                 col = col - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
 
             row = copy_row
             col = copy_col
-            while (row > 0 and col < COLS):
-                self.moves.append([row-1, col+1])
+            while (row > 0 and col < COLS-1):
                 row = row - 1
                 col = col + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
                 
             row = copy_row
             col = copy_col
-            while (row < ROWS and col > 0):
-                self.moves.append([row+1, col-1])
+            while (row < ROWS-1 and col > 0):
                 row = row + 1
                 col = col - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
 
             row = copy_row
             col = copy_col
-            while (row < ROWS and col < COLS):
-                self.moves.append([row+1, col+1])
+            while (row < ROWS-1 and col < COLS-1):
                 row = row + 1
                 col = col + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
 
             row = copy_row
             col = copy_col
 
             while (row > 0):
-                self.moves.append([row-1, col])
                 row = row - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             row = copy_row
 
-            while (row < ROWS):
-                self.moves.append([row+1, col])
+            while (row < ROWS-1):
                 row = row + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             row = copy_row
 
             while (col > 0):
-                self.moves.append([row, col-1])
                 col = col - 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             col = copy_col
-
-            while (col < COLS):
-                self.moves.append([row, col+1])
+            
+            while (col < COLS-1):
                 col = col + 1
+                moves.append([row, col])
+                if (self.grid[row][col].piece != None):
+                    break
             col = copy_col
 
 
         ##########################################
         elif (piece == "king"):
             if (row > 0 and col > 0):
-                self.moves.append([row-1, col-1])
-                self.moves.append([row-1, col])
-                self.moves.append([row, col-1])
+                moves.append([row-1, col-1])
+                moves.append([row-1, col])
+                moves.append([row, col-1])
             if (row < ROWS and col < COLS):
-                self.moves.append([row+1, col+1])
-                self.moves.append([row+1, col])
-                self.moves.append([row, col+1])
+                moves.append([row+1, col+1])
+                moves.append([row+1, col])
+                moves.append([row, col+1])
             if (row > 0 and col < COLS):
-                self.moves.append([row-1, col+1])
+                moves.append([row-1, col+1])
             if (row < ROWS and col > 0):
-                self.moves.append([row+1, col-1])
+                moves.append([row+1, col-1])
         
+        return moves
