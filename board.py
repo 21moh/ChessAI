@@ -40,8 +40,50 @@ class Board:
         grid[7][4].add_piece("white", "king", "whiteKing.png", 7, 4)
 
 
-    def capture(self, piece):
+    def loadPlacements(self, moves, turn, surface):
         pass
+        grid = self.grid
+            
+        for i in range(len(moves)):
+            if (grid[moves[i][0]][moves[i][1]].piece == None):  # No piece in location
+                img = pygame.image.load("attack.png")
+
+                original_width, original_height = img.get_size()
+
+                spacing_factor = 0.8
+
+                # Calculates scaling factors
+                width_scale = CELL_SIZE * spacing_factor / original_width
+                height_scale = CELL_SIZE * spacing_factor / original_height
+                # Use the smaller scaling factor to maintain aspect ratio
+                scale_factor = min(width_scale, height_scale)
+                # Scales the image
+                img = pygame.transform.scale(img, (int(original_width * scale_factor), int(original_height * scale_factor)))
+                img_center = (moves[i][1] * CELL_SIZE+50, moves[i][0] * CELL_SIZE+50)
+
+                surface.blit(img, img.get_rect(center=img_center))
+
+
+            elif (grid[moves[i][0]][moves[i][1]].team != None):
+                if (turn != grid[moves[i][0]][moves[i][1]].team): # Enemy piece in location
+                    img = pygame.image.load("cap_attack.png")
+
+                    original_width, original_height = img.get_size()
+
+                    spacing_factor = 0.8
+
+                    # Calculates scaling factors
+                    width_scale = CELL_SIZE * spacing_factor / original_width
+                    height_scale = CELL_SIZE * spacing_factor / original_height
+                    # Use the smaller scaling factor to maintain aspect ratio
+                    scale_factor = min(width_scale, height_scale)
+                    # Scales the image
+                    img = pygame.transform.scale(img, (int(original_width * scale_factor), int(original_height * scale_factor)))
+                    img_center = (moves[i][1] * CELL_SIZE+50, moves[i][0] * CELL_SIZE+50)
+
+                    surface.blit(img, img.get_rect(center=img_center))
+
+
 
     def get_moves(self, piece, row, col, team):
         self.row = row
@@ -53,11 +95,16 @@ class Board:
             if (self.team == "white"):
                 
                 if (row == 6):
-                    moves.append([row-2, col])
-                    moves.append([row-1, col])
+                    if (self.grid[row-1][col].piece == None):
+                        moves.append([row-1, col])
+                    if (self.grid[row-2][col].piece == None and self.grid[row-1][col].piece == None):
+                        moves.append([row-2, col])
+                    
                 if (row >= 1 and row <= 5):
-                    moves.append([row-1, col])
-                if (row >= 1 and row <= 5 and col > 0 and col < COLS):  # Capturing
+                    if (self.grid[row-1][col].piece == None):
+                        moves.append([row-1, col])
+
+                if (row >= 1 and row <= 5 and col > 0 and col < COLS-1):  # Capturing
                     if (self.grid[row-1][col-1].piece != None):
                         moves.append([row-1, col-1])
                     if (self.grid[row-1][col+1].piece != None):
@@ -256,13 +303,13 @@ class Board:
                 moves.append([row-1, col-1])
                 moves.append([row-1, col])
                 moves.append([row, col-1])
-            if (row < ROWS and col < COLS):
+            if (row < ROWS-1 and col < COLS-1):
                 moves.append([row+1, col+1])
                 moves.append([row+1, col])
                 moves.append([row, col+1])
-            if (row > 0 and col < COLS):
+            if (row > 0 and col < COLS-1):
                 moves.append([row-1, col+1])
-            if (row < ROWS and col > 0):
+            if (row < ROWS-1 and col > 0):
                 moves.append([row+1, col-1])
         
         return moves

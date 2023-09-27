@@ -18,7 +18,6 @@ class Dragger:
         piece = self.piece
         img = pygame.image.load(piece.image)
 
-
         original_width, original_height = img.get_size()
 
         spacing_factor = 0.9
@@ -32,6 +31,11 @@ class Dragger:
         img = pygame.transform.scale(img, (int(original_width * scale_factor), int(original_height * scale_factor)))
         img_center = (self.mouseX, self.mouseY)
         surface.blit(img, img.get_rect(center=img_center))
+
+
+        
+        
+
 
 
     def save_object(self, obj):
@@ -51,6 +55,7 @@ class Dragger:
     def undrag_piece(self):
         self.piece = None
         self.dragging = False
+
 
 
     
