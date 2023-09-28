@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 from const import *
 from game import Game
@@ -144,7 +145,81 @@ class Main:
 
             # if turn equals black --> AI SECTION
             elif turn == "black":
+                index1 = random.randint(0,7)
+                index2 = random.randint(0,7)
+                if game.board.grid[index1][index2].team == "black":
+                    game.board.grid[index1][index2].moves = game.board.get_moves(game.board.grid[index1][index2].piece, index1, index2, "black")
+                    movelist = game.board.grid[index1][index2].moves
+                    while (len(movelist) == 0):
+                        index1 = random.randint(0,7)
+                        index2 = random.randint(0,7)
+                        if game.board.grid[index1][index2].team == "black":
+                            game.board.grid[index1][index2].moves = game.board.get_moves(game.board.grid[index1][index2].piece, index1, index2, "black")
+                            movelist = game.board.grid[index1][index2].moves
+                    selectMove = random.randint(0, len(movelist)-1)
 
+
+
+                    # animation section for AI
+                    """
+                    copy = game.board.grid[index1][index2]
+
+                    original_x = index1 * CELL_SIZE+50
+                    original_y = index2 * CELL_SIZE+50
+
+                    final_x = movelist[selectMove][0] * CELL_SIZE+50
+                    final_y = movelist[selectMove][1] * CELL_SIZE+50
+
+
+
+                    ####################
+                    
+                    
+                    ######################
+
+                    print("value checks")
+                    print(original_x)
+                    print(original_y)
+                    print(final_x)
+                    print(final_y)
+                    
+                    while (original_x != final_x or original_y != final_y):
+                        if (original_x < final_x):
+                            original_x = original_x + 1
+                        if (original_x > final_x):
+                            original_x = original_x - 1
+                        if (original_y < final_y):
+                            original_y = original_y + 1
+                        if (original_y > final_y):
+                            original_y = original_y - 1
+                        print("inside while loop")
+                        
+                        
+                        img = pygame.image.load(game.board.grid[index1][index2].image)
+                        original_width, original_height = img.get_size()
+
+                        spacing_factor = 0.8
+
+                        # Calculates scaling factors
+                        width_scale = CELL_SIZE * spacing_factor / original_width
+                        height_scale = CELL_SIZE * spacing_factor / original_height
+
+                        # Use the smaller scaling factor to maintain aspect ratio
+                        scale_factor = min(width_scale, height_scale)
+
+                        # Scales the image
+                        img = pygame.transform.scale(img, (int(original_width * scale_factor), int(original_height * scale_factor)))
+                        img_center = (original_x, original_y)
+                        screen.blit(img, img.get_rect(center=img_center))
+                        
+                    # end of animation section for AI
+                    """
+                    game.board.grid[movelist[selectMove][0]][movelist[selectMove][1]] = game.board.grid[index1][index2]
+                    game.board.grid[index1][index2] = Square(index1, index2)
+                    turn = "white"
+
+
+                """
                 if dragger.dragging == True:
                     
                     dragger.update_mouse(event.pos)
@@ -229,7 +304,7 @@ class Main:
                             dragger.dragging = False
                             dragger.piece = None
                             dragger.object = None
-
+                """
 
             pygame.display.flip()
 
