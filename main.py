@@ -219,7 +219,7 @@ class Main:
                     turn = "white"
 
 
-                """
+                """S
                 if dragger.dragging == True:
                     
                     dragger.update_mouse(event.pos)
