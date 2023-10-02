@@ -8,38 +8,78 @@ from square import Square
 class Board:
     def __init__(self):
         self.grid = [[None for i in range(8)] for i in range(8)]    #square class, holds current piece and possible attacking pieces
-        self.Wchecks = []
-        self.Bchecks = []
+        self.white_locs = {}
+        self.black_locs = {}
+        self.whiteCheck = False
+        self.blackCheck = False
+        self.attackingWhiteforCheck = []
+        self.attackingBlackforCheck = []
 
     def initialize_board(self):
+        white_locs = self.white_locs
+        black_locs = self.black_locs
         grid = self.grid
         for i in range(ROWS):
             for j in range(COLS):
                 grid[i][j] = Square(i, j)
         
+        white_locs["pond"] = []
+        black_locs["pond"] = []
+        white_locs["knight"] = []
+        black_locs["knight"] = []
+        white_locs["bishop"] = []
+        black_locs["bishop"] = []
+        white_locs["rook"] = []
+        black_locs["rook"] = []
+        white_locs["queen"] = []
+        black_locs["queen"] = []
+        white_locs["king"] = []
+        black_locs["king"] = []
         for i in range(8):
             grid[1][i].add_piece("black", "pond", "images/blackPond.png", 1, i)
             grid[6][i].add_piece("white", "pond", "images/whitePond.png", 6, i)
-        
+            black_locs["pond"].append((1, i))
+            white_locs["pond"].append((6, i))
+
+
         grid[0][0].add_piece("black", "rook", "images/blackRook.png", 0, 0)
         grid[0][7].add_piece("black", "rook", "images/blackRook.png", 0, 7)
         grid[7][0].add_piece("white", "rook", "images/whiteRook.png", 7, 0)
         grid[7][7].add_piece("white", "rook", "images/whiteRook.png", 7, 7)
+        black_locs["rook"].append((0, 0))
+        black_locs["rook"].append((0, 7))
+        white_locs["rook"].append((7, 0))
+        white_locs["rook"].append((7, 7))
 
         grid[0][1].add_piece("black", "knight", "images/blackKnight.png", 0, 1)
         grid[0][6].add_piece("black", "knight", "images/blackKnight.png", 0, 6)
         grid[7][1].add_piece("white", "knight", "images/whiteKnight.png", 7, 1)
         grid[7][6].add_piece("white", "knight", "images/whiteKnight.png", 7, 6)
+        black_locs["knight"].append((0, 1))
+        black_locs["knight"].append((0, 6))
+        white_locs["knight"].append((7, 1))
+        white_locs["knight"].append((7, 6))
+        
 
         grid[0][2].add_piece("black", "bishop", "images/blackBishop.png", 0, 2)
         grid[0][5].add_piece("black", "bishop", "images/blackBishop.png", 0, 5)
         grid[7][2].add_piece("white", "bishop", "images/whiteBishop.png", 7, 2)
         grid[7][5].add_piece("white", "bishop", "images/whiteBishop.png", 7, 5)
+        black_locs["bishop"].append((0, 2))
+        black_locs["bishop"].append((0, 5))
+        white_locs["bishop"].append((7, 2))
+        white_locs["bishop"].append((7, 5))
+        
 
         grid[0][3].add_piece("black", "queen", "images/blackQueen.png", 0, 3)
         grid[0][4].add_piece("black", "king", "images/blackKing.png", 0, 4)
         grid[7][3].add_piece("white", "queen", "images/whiteQueen.png", 7, 3)
         grid[7][4].add_piece("white", "king", "images/whiteKing.png", 7, 4)
+        black_locs["queen"].append((0, 3))
+        black_locs["king"].append((0, 4))
+        white_locs["queen"].append((7, 3))
+        white_locs["king"].append((7, 4))
+        
 
 
     def moveAnimation(self, surface, original_locations, final_locations):       # for AI
@@ -587,9 +627,55 @@ class Board:
         return moves
     
 
-    def CheckGate(self):
-        pass
+    def check4Checks(self, copygrid, AttackingTeam):
+        # check if black is in check
+        
+        inCheck = False
+        if (AttackingTeam == "white"):
+            
+            # get king position
+            kingloc = list(self.white_locs["king"])
+            print("kingloc check", kingloc)
+            
+
+            for row in range(ROWS):
+                for col in range(COLS):
+                    if copygrid[row][col].team == "black":
+                        piece = copygrid[row][col].piece
+                        piece_moves = self.get_moves(piece, row, col, "black")
+                        print("kingloc check", kingloc, "piece moves check", piece_moves)
+                        if piece_moves.count(kingloc) >= 1:
+                            inCheck = True
+                            self.blackCheck = True
+                            self.attackingWhiteforCheck.append([row, col])
+            print("CHECK RESULT: ", inCheck)
+
+            if len(self.attackingWhiteforCheck) == 0:
+                inCheck = False
+                self.blackCheck = False
+            return inCheck
+            
+            #  def get_moves(self, piece, row, col, team):
+            # need to keep track of all pieces
+            pass
+        
+        
+        if (AttackingTeam == "black"):
+            pass
+
+        #return True
         
 
-    def AI(self):
-        pass
+# revealled check 
+# check to position
+# both
+
+    def checkForChecks(self, attackingTeam):
+        if attackingTeam == "white":
+            pass
+
+        elif attackingTeam == "black":
+            pass
+        
+        
+        
