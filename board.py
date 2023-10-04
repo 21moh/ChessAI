@@ -14,6 +14,8 @@ class Board:
         self.black_locs = {}
         self.whiteInCheck = False
         self.blackInCheck = False
+        self.whiteBlocks = []
+        self.blackBlocks = []
         self.attackingWhiteforCheck = []
         self.attackingBlackforCheck = []
 
@@ -632,12 +634,12 @@ class Board:
     
 
     def checkChecker(self, attacking_team):
-        blackcheckmate = False
-        whitecheckmate = False
+        blackInCheckmate = True     # True until not true in function
+        whiteInCheckmate = True     # True until not true in function
 
         if (attacking_team == "white"):
             
-            kingloc = [self.white_locs["king"][0][0], self.white_locs["king"][0][1]]
+            kingloc = [self.black_locs["king"][0][0], self.black_locs["king"][0][1]]
             attacking_pieces = []
                 #def get_moves(self, piece, row, col, team):
 
@@ -648,8 +650,10 @@ class Board:
                             attacking_pieces.append(self.grid[row][col])
                             
             if (len(attacking_pieces) >= 1):
-            
+                self.blackInCheck = True
                 # check for checkmate
+                
+                # check if there are any pieces that can block the checkmate
                 for row in range(ROWS):
                     for col in range(COLS):
                         if self.grid[row][col].team == "black":
@@ -659,14 +663,30 @@ class Board:
                                 savePiece = copy.deepcopy(self.grid[row][col])
                                 copygrid[move[0]][move[1]] = savePiece
                                 copygrid[row][col] = Square(row, col)
-                                copy_attacking = copy.deepcopy(attacking_pieces)        # attacking pieces is a list holding the square objects for the attacking pieces
                                 result = []
-                                for i in range(len(copy_attacking)):
-                                    if kingloc not in self.get_moves(copy_attacking.piece, copy_attacking.row, copy_attacking.col, copy_attacking.team, copygrid): # add grid part to function
+                                for i in range(len(attacking_pieces)):
+                                    if kingloc not in self.get_moves(attacking_pieces.piece, attacking_pieces.row, attacking_pieces.col, attacking_pieces.team, copygrid): # add grid part to function
                                         result.append(1)
-                                if len(result) == len(copy_attacking):
-                                    blackcheckmate = False
+                                if len(result) == len(attacking_pieces):
+                                    blackInCheckmate = False
+                                    self.blackBlocks.append()
                                 #self.blackblockingmoves.append()
+                
+                # check if the king can move to avoid the checkmate
+                for moves in range(len(self.get_moves(self.grid[kingloc[0]][kingloc[1]]))):
+                    copygrid = copy.deepcopy(self.grid)
+                    initialpos = copy.deepcopy(copygrid[kingloc[0]][kingloc[1]])
+                    copygrid[moves[0]][moves[1]] = initialpos
+                    copygrid[kingloc[0]][kingloc[1]] = Square(initialpos.row, initialpos.col)
+                    copykingloc = copy.deepcopy(kingloc)
+                    copykingloc = [moves[0], moves[1]]
+                    result = []
+                    for i in range(len(attacking_pieces)):
+                        if copykingloc not in self.get_moves(attacking_pieces.piece, attacking_pieces.row, attacking_pieces.col, attacking_pieces.team, copygrid): # add grid part to function
+                            result.append(1)
+                    if len(result) == len(attacking_pieces):
+                        blackInCheckmate = False
+                        self.blackBlocks.append()
 
         elif (attacking_team == "black"):
 
