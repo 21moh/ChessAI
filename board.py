@@ -137,7 +137,7 @@ class Board:
 
 
 
-    def get_moves(self, piece, row, col, team):
+    def get_moves(self, piece, row, col, team, grid):
         self.row = row
         self.col = col
         self.team = team
@@ -147,52 +147,52 @@ class Board:
             if (self.team == "white"):
                 
                 if (row == 6):
-                    if (self.grid[row-1][col].piece == None):
+                    if (grid[row-1][col].piece == None):
                         moves.append([row-1, col])
-                    if (self.grid[row-2][col].piece == None and self.grid[row-1][col].piece == None):
+                    if (grid[row-2][col].piece == None and grid[row-1][col].piece == None):
                         moves.append([row-2, col])
                     if (col >= 0 and col < COLS - 1):
-                        if (self.grid[row-1][col+1].team == "black"):
+                        if (grid[row-1][col+1].team == "black"):
                             moves.append([row-1, col+1])
                     if (col > 0 and col <= COLS - 1):
-                        if (self.grid[row-1][col-1].team == "black"):
+                        if (grid[row-1][col-1].team == "black"):
                             moves.append([row-1, col-1])
                     
                     
                 if (row >= 1 and row <= 5):
-                    if (self.grid[row-1][col].piece == None):
+                    if (grid[row-1][col].piece == None):
                         moves.append([row-1, col])
 
                 if (row >= 1 and row <= 5 and col > 0 and col < COLS-1):  # Capturing
-                    if (self.grid[row-1][col-1].team == "black"):
+                    if (grid[row-1][col-1].team == "black"):
                         moves.append([row-1, col-1])
-                    if (self.grid[row-1][col+1].team == "black"):
+                    if (grid[row-1][col+1].team == "black"):
                         moves.append([row-1, col+1])
                 
 
             elif (self.team == "black"):
                 
                 if (row == 1):
-                    if (self.grid[row+1][col].piece == None):
+                    if (grid[row+1][col].piece == None):
                         moves.append([row+1, col])
-                    if (self.grid[row+2][col].piece == None):
+                    if (grid[row+2][col].piece == None):
                         moves.append([row+2, col])
                     if (col >= 0 and col < COLS - 1):
-                        if (self.grid[row+1][col+1].team == "white"):
+                        if (grid[row+1][col+1].team == "white"):
                             moves.append([row+1, col+1])
                     if (col > 0 and col <= COLS - 1):
-                        if (self.grid[row+1][col-1].team == "white"):
+                        if (grid[row+1][col-1].team == "white"):
                             moves.append([row+1, col-1])
                     
                         
                 if (row >= 2 and row <= 6):
-                    if (self.grid[row+1][col].piece == None):
+                    if (grid[row+1][col].piece == None):
                         moves.append([row+1, col])
 
                 if (row >= 2 and row <= 6 and col > 0 and col < COLS-1):  # Capturing
-                    if (self.grid[row+1][col-1].team == "white"):
+                    if (grid[row+1][col-1].team == "white"):
                         moves.append([row+1, col-1])
-                    if (self.grid[row+1][col+1].team == "white"):
+                    if (grid[row+1][col+1].team == "white"):
                         moves.append([row+1, col+1])
 
 
@@ -209,10 +209,10 @@ class Board:
                 while (row > 0 and col > 0):
                     row = row - 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
 
-                    if (self.grid[row][col].piece != None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece != None or grid[row][col].team == "black"):
                         break
 
                 row = copy_row
@@ -220,9 +220,9 @@ class Board:
                 while (row > 0 and col < COLS-1):
                     row = row - 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                     
                 row = copy_row
@@ -230,9 +230,9 @@ class Board:
                 while (row < ROWS-1 and col > 0):
                     row = row + 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
                 row = copy_row
@@ -240,9 +240,9 @@ class Board:
                 while (row < ROWS-1 and col < COLS-1):
                     row = row + 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
             elif(self.team == "black"):
@@ -250,10 +250,10 @@ class Board:
                 while (row > 0 and col > 0):
                     row = row - 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
 
-                    if (self.grid[row][col].piece != None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece != None or grid[row][col].team == "white"):
                         break
 
                 row = copy_row
@@ -261,9 +261,9 @@ class Board:
                 while (row > 0 and col < COLS-1):
                     row = row - 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                     
                 row = copy_row
@@ -271,9 +271,9 @@ class Board:
                 while (row < ROWS-1 and col > 0):
                     row = row + 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
                 row = copy_row
@@ -281,9 +281,9 @@ class Board:
                 while (row < ROWS-1 and col < COLS-1):
                     row = row + 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
         
@@ -294,55 +294,55 @@ class Board:
 
             if (self.team == "white"):
                 if (row-2 >= 0 and col-1 >= 0):
-                    if (self.grid[row-2][col-1].piece == None or self.grid[row-2][col-1].team == "black"):
+                    if (grid[row-2][col-1].piece == None or grid[row-2][col-1].team == "black"):
                         moves.append([row-2, col-1])
                 if (row-2 >= 0 and col+1 <= COLS-1):
-                    if (self.grid[row-2][col+1].piece == None or self.grid[row-2][col+1].team == "black"):
+                    if (grid[row-2][col+1].piece == None or grid[row-2][col+1].team == "black"):
                         moves.append([row-2, col+1])
                 if (row-1 >= 0 and col-2 >= 0):
-                    if (self.grid[row-1][col-2].piece == None or self.grid[row-1][col-2].team == "black"):
+                    if (grid[row-1][col-2].piece == None or grid[row-1][col-2].team == "black"):
                         moves.append([row-1, col-2])
                 if (row+1 <= ROWS-1 and col-2 >= 0):
-                    if (self.grid[row+1][col-2].piece == None or self.grid[row+1][col-2].team == "black"):
+                    if (grid[row+1][col-2].piece == None or grid[row+1][col-2].team == "black"):
                         moves.append([row+1, col-2])
                 if (row+2 <= ROWS-1 and col-1 >= 0):
-                    if (self.grid[row+2][col-1].piece == None or self.grid[row+2][col-1].team == "black"):
+                    if (grid[row+2][col-1].piece == None or grid[row+2][col-1].team == "black"):
                         moves.append([row+2, col-1])
                 if (row+2 <= ROWS-1 and col+1 <= COLS-1):
-                    if (self.grid[row+2][col+1].piece == None or self.grid[row+2][col+1].team == "black"):
+                    if (grid[row+2][col+1].piece == None or grid[row+2][col+1].team == "black"):
                         moves.append([row+2, col+1])
                 if (row+1 <= ROWS-1 and col+2 <= COLS-1):
-                    if (self.grid[row+1][col+2].piece == None or self.grid[row+1][col+2].team == "black"):
+                    if (grid[row+1][col+2].piece == None or grid[row+1][col+2].team == "black"):
                         moves.append([row+1, col+2])
                 if (row-1 >=0 and col+2 <= COLS-1):
-                    if (self.grid[row-1][col+2].piece == None or self.grid[row-1][col+2].team == "black"):
+                    if (grid[row-1][col+2].piece == None or grid[row-1][col+2].team == "black"):
                         moves.append([row-1, col+2])
 
 
             elif (self.team == "black"):
                 if (row-2 >= 0 and col-1 >= 0):
-                    if (self.grid[row-2][col-1].piece == None or self.grid[row-2][col-1].team == "white"):
+                    if (grid[row-2][col-1].piece == None or grid[row-2][col-1].team == "white"):
                         moves.append([row-2, col-1])
                 if (row-2 >= 0 and col+1 <= COLS-1):
-                    if (self.grid[row-2][col+1].piece == None or self.grid[row-2][col+1].team == "white"):
+                    if (grid[row-2][col+1].piece == None or grid[row-2][col+1].team == "white"):
                         moves.append([row-2, col+1])
                 if (row-1 >= 0 and col-2 >= 0):
-                    if (self.grid[row-1][col-2].piece == None or self.grid[row-1][col-2].team == "white"):
+                    if (grid[row-1][col-2].piece == None or grid[row-1][col-2].team == "white"):
                         moves.append([row-1, col-2])
                 if (row+1 <= ROWS-1 and col-2 >= 0):
-                    if (self.grid[row+1][col-2].piece == None or self.grid[row+1][col-2].team == "white"):
+                    if (grid[row+1][col-2].piece == None or grid[row+1][col-2].team == "white"):
                         moves.append([row+1, col-2])
                 if (row+2 <= ROWS-1 and col-1 >= 0):
-                    if (self.grid[row+2][col-1].piece == None or self.grid[row+2][col-1].team == "white"):
+                    if (grid[row+2][col-1].piece == None or grid[row+2][col-1].team == "white"):
                         moves.append([row+2, col-1])
                 if (row+2 <= ROWS-1 and col+1 <= COLS-1):
-                    if (self.grid[row+2][col+1].piece == None or self.grid[row+2][col+1].team == "white"):
+                    if (grid[row+2][col+1].piece == None or grid[row+2][col+1].team == "white"):
                         moves.append([row+2, col+1])
                 if (row+1 <= ROWS-1 and col+2 <= COLS-1):
-                    if (self.grid[row+1][col+2].piece == None or self.grid[row+1][col+2].team == "white"):
+                    if (grid[row+1][col+2].piece == None or grid[row+1][col+2].team == "white"):
                         moves.append([row+1, col+2])
                 if (row-1 >=0 and col+2 <= COLS-1):
-                    if (self.grid[row-1][col+2].piece == None or self.grid[row-1][col+2].team == "white"):
+                    if (grid[row-1][col+2].piece == None or grid[row-1][col+2].team == "white"):
                         moves.append([row-1, col+2])
 
         ##########################################
@@ -354,66 +354,66 @@ class Board:
 
                 while (row > 0):
                     row = row - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (row < ROWS-1):
                     row = row + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (col > 0):
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 col = copy_col
                 
                 while (col < COLS-1):
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
             elif team == "black":
 
                 while (row > 0):
                     row = row - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (row < ROWS-1):
                     row = row + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (col > 0):
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 col = copy_col
                 
                 while (col < COLS-1):
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
 
@@ -428,10 +428,10 @@ class Board:
                 while (row > 0 and col > 0):
                     row = row - 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
 
-                    if (self.grid[row][col].piece != None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece != None or grid[row][col].team == "black"):
                         break
 
                 row = copy_row
@@ -439,9 +439,9 @@ class Board:
                 while (row > 0 and col < COLS-1):
                     row = row - 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                     
                 row = copy_row
@@ -449,9 +449,9 @@ class Board:
                 while (row < ROWS-1 and col > 0):
                     row = row + 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
                 row = copy_row
@@ -459,9 +459,9 @@ class Board:
                 while (row < ROWS-1 and col < COLS-1):
                     row = row + 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
                 row = copy_row
@@ -470,33 +470,33 @@ class Board:
                 ### horizontal moves
                 while (row > 0):
                     row = row - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (row < ROWS-1):
                     row = row + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (col > 0):
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 col = copy_col
                 
                 while (col < COLS-1):
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 col = copy_col
             
@@ -505,10 +505,10 @@ class Board:
                 while (row > 0 and col > 0):
                     row = row - 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
 
-                    if (self.grid[row][col].piece != None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece != None or grid[row][col].team == "white"):
                         break
 
                 row = copy_row
@@ -516,9 +516,9 @@ class Board:
                 while (row > 0 and col < COLS-1):
                     row = row - 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                     
                 row = copy_row
@@ -526,9 +526,9 @@ class Board:
                 while (row < ROWS-1 and col > 0):
                     row = row + 1
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
                 row = copy_row
@@ -536,9 +536,9 @@ class Board:
                 while (row < ROWS-1 and col < COLS-1):
                     row = row + 1
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
 
                 row = copy_row
@@ -546,33 +546,33 @@ class Board:
 
                 while (row > 0):
                     row = row - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (row < ROWS-1):
                     row = row + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 row = copy_row
 
                 while (col > 0):
                     col = col - 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 col = copy_col
                 
                 while (col < COLS-1):
                     col = col + 1
-                    if (self.grid[row][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col])
-                    if (self.grid[row][col].piece != None):
+                    if (grid[row][col].piece != None):
                         break
                 col = copy_col
 
@@ -580,50 +580,50 @@ class Board:
         elif (piece == "king"):
             if team == "white":
                 if (row > 0 and col > 0):
-                    if (self.grid[row-1][col-1].piece == None or self.grid[row-1][col-1].team == "black"):
+                    if (grid[row-1][col-1].piece == None or grid[row-1][col-1].team == "black"):
                         moves.append([row-1, col-1])
-                    if (self.grid[row-1][col].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row-1][col].piece == None or grid[row][col].team == "black"):
                         moves.append([row-1, col])
-                    if (self.grid[row][col-1].piece == None or self.grid[row][col].team == "black"):
+                    if (grid[row][col-1].piece == None or grid[row][col].team == "black"):
                         moves.append([row, col-1])
                 
                 if (row < ROWS-1 and col < COLS-1):
-                    if (self.grid[row+1][col+1].piece == None or self.grid[row+1][col+1].team == "black"):
+                    if (grid[row+1][col+1].piece == None or grid[row+1][col+1].team == "black"):
                         moves.append([row+1, col+1])
-                    if (self.grid[row+1][col].piece == None or self.grid[row+1][col].team == "black"):
+                    if (grid[row+1][col].piece == None or grid[row+1][col].team == "black"):
                         moves.append([row+1, col])
-                    if (self.grid[row][col+1].piece == None or self.grid[row][col+1].team == "black"):
+                    if (grid[row][col+1].piece == None or grid[row][col+1].team == "black"):
                         moves.append([row, col+1])
                 
                 if (row > 0 and col < COLS-1):
-                    if (self.grid[row-1][col+1].piece == None or self.grid[row-1][col+1].team == "black"):
+                    if (grid[row-1][col+1].piece == None or grid[row-1][col+1].team == "black"):
                         moves.append([row-1, col+1])
                 if (row < ROWS-1 and col > 0):
-                    if (self.grid[row+1][col-1].piece == None or self.grid[row+1][col-1].team == "black"):
+                    if (grid[row+1][col-1].piece == None or grid[row+1][col-1].team == "black"):
                         moves.append([row+1, col-1])
             
             elif team == "black":
                 if (row > 0 and col > 0):
-                    if (self.grid[row-1][col-1].piece == None or self.grid[row-1][col-1].team == "white"):
+                    if (grid[row-1][col-1].piece == None or grid[row-1][col-1].team == "white"):
                         moves.append([row-1, col-1])
-                    if (self.grid[row-1][col].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row-1][col].piece == None or grid[row][col].team == "white"):
                         moves.append([row-1, col])
-                    if (self.grid[row][col-1].piece == None or self.grid[row][col].team == "white"):
+                    if (grid[row][col-1].piece == None or grid[row][col].team == "white"):
                         moves.append([row, col-1])
                 
                 if (row < ROWS-1 and col < COLS-1):
-                    if (self.grid[row+1][col+1].piece == None or self.grid[row+1][col+1].team == "white"):
+                    if (grid[row+1][col+1].piece == None or grid[row+1][col+1].team == "white"):
                         moves.append([row+1, col+1])
-                    if (self.grid[row+1][col].piece == None or self.grid[row+1][col].team == "white"):
+                    if (grid[row+1][col].piece == None or grid[row+1][col].team == "white"):
                         moves.append([row+1, col])
-                    if (self.grid[row][col+1].piece == None or self.grid[row][col+1].team == "white"):
+                    if (grid[row][col+1].piece == None or grid[row][col+1].team == "white"):
                         moves.append([row, col+1])
                 
                 if (row > 0 and col < COLS-1):
-                    if (self.grid[row-1][col+1].piece == None or self.grid[row-1][col+1].team == "white"):
+                    if (grid[row-1][col+1].piece == None or grid[row-1][col+1].team == "white"):
                         moves.append([row-1, col+1])
                 if (row < ROWS-1 and col > 0):
-                    if (self.grid[row+1][col-1].piece == None or self.grid[row+1][col-1].team == "white"):
+                    if (grid[row+1][col-1].piece == None or grid[row+1][col-1].team == "white"):
                         moves.append([row+1, col-1])
         
         return moves
@@ -644,7 +644,7 @@ class Board:
             for row in range(ROWS):
                 for col in range(COLS):
                     if self.grid[row][col].team == "white":
-                        if (self.get_moves(self.grid[row][col].piece, row, col, "white").count(kingloc) >= 1 ): # if the piece on this square has a move that attacks the king location
+                        if (self.get_moves(self.grid[row][col].piece, row, col, "white", self.grid).count(kingloc) >= 1 ): # if the piece on this square has a move that attacks the king location
                             attacking_pieces.append(self.grid[row][col])
                             
             if (len(attacking_pieces) >= 1):
