@@ -1,17 +1,19 @@
 import pygame
 import sys
+import copy
 
 from const import *
 from piece import Piece
 from square import Square
+
 
 class Board:
     def __init__(self):
         self.grid = [[None for i in range(8)] for i in range(8)]    #square class, holds current piece and possible attacking pieces
         self.white_locs = {}
         self.black_locs = {}
-        self.whiteCheck = False
-        self.blackCheck = False
+        self.whiteInCheck = False
+        self.blackInCheck = False
         self.attackingWhiteforCheck = []
         self.attackingBlackforCheck = []
 
@@ -626,56 +628,48 @@ class Board:
         
         return moves
     
+    
+    
 
-    def check4Checks(self, copygrid, AttackingTeam):
-        # check if black is in check
-        
-        inCheck = False
-        if (AttackingTeam == "white"):
+    def checkChecker(self, attacking_team):
+        blackcheckmate = False
+        whitecheckmate = False
+
+        if (attacking_team == "white"):
             
-            # get king position
-            kingloc = list(self.white_locs["king"])
-            print("kingloc check", kingloc)
-            
+            kingloc = [self.white_locs["king"][0][0], self.white_locs["king"][0][1]]
+            attacking_pieces = []
+                #def get_moves(self, piece, row, col, team):
 
             for row in range(ROWS):
                 for col in range(COLS):
-                    if copygrid[row][col].team == "black":
-                        piece = copygrid[row][col].piece
-                        piece_moves = self.get_moves(piece, row, col, "black")
-                        print("kingloc check", kingloc, "piece moves check", piece_moves)
-                        if piece_moves.count(kingloc) >= 1:
-                            inCheck = True
-                            self.blackCheck = True
-                            self.attackingWhiteforCheck.append([row, col])
-            print("CHECK RESULT: ", inCheck)
-
-            if len(self.attackingWhiteforCheck) == 0:
-                inCheck = False
-                self.blackCheck = False
-            return inCheck
+                    if self.grid[row][col].team == "white":
+                        if (self.get_moves(self.grid[row][col].piece, row, col, "white").count(kingloc) >= 1 ): # if the piece on this square has a move that attacks the king location
+                            attacking_pieces.append(self.grid[row][col])
+                            
+            if (len(attacking_pieces) >= 1):
             
-            #  def get_moves(self, piece, row, col, team):
-            # need to keep track of all pieces
-            pass
-        
-        
-        if (AttackingTeam == "black"):
-            pass
+                # check for checkmate
+                for row in range(ROWS):
+                    for col in range(COLS):
+                        if self.grid[row][col].team == "black":
+                            pieceMoves = self.get_moves(self.grid[row][col].piece, row, col, "black")
+                            for move in pieceMoves:
+                                copygrid = copy.deepcopy(self.grid)
+                                savePiece = copy.deepcopy(self.grid[row][col])
+                                copygrid[move[0]][move[1]] = savePiece
+                                copygrid[row][col] = Square(row, col)
+                                copy_attacking = copy.deepcopy(attacking_pieces)        # attacking pieces is a list holding the square objects for the attacking pieces
+                                result = []
+                                for i in range(len(copy_attacking)):
+                                    if kingloc not in self.get_moves(copy_attacking.piece, copy_attacking.row, copy_attacking.col, copy_attacking.team, copygrid): # add grid part to function
+                                        result.append(1)
+                                if len(result) == len(copy_attacking):
+                                    blackcheckmate = False
+                                #self.blackblockingmoves.append()
 
-        #return True
-        
+        elif (attacking_team == "black"):
 
-# revealled check 
-# check to position
-# both
-
-    def checkForChecks(self, attackingTeam):
-        if attackingTeam == "white":
             pass
-
-        elif attackingTeam == "black":
-            pass
-        
         
         

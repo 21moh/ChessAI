@@ -106,14 +106,14 @@ class Main:
                                     # if (kingInCheck() --> function uses a created copy board with piece in new place hypothetically) --> uses get_moves function inside the function for ALL pieces.
 
                                     # checks if moving the piece would reveal a check
-                                    copygrid = copy.deepcopy(game.board.grid)
-                                    temp = copy.deepcopy(game.board.grid[dragger.initial_row][dragger.initial_col])
-                                    copygrid[clicked_row][clicked_col] = temp
-                                    copygrid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                    #copygrid = copy.deepcopy(game.board.grid)
+                                    #temp = copy.deepcopy(game.board.grid[dragger.initial_row][dragger.initial_col])
+                                    #copygrid[clicked_row][clicked_col] = temp
+                                    #copygrid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
                                     
 
-                                    inCheck = game.board.check4Checks(copygrid, "white")
-                                    if inCheck == False:    # checks if move is allowed
+                                    #inCheck = game.board.check4Checks(copygrid, "white")
+                                    #if inCheck == False:    # checks if move is allowed
 
                                     
 
@@ -136,6 +136,8 @@ class Main:
                                             game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
 
                                             game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+
+                                            #get_moves
                                             turn = "black"
 
 
