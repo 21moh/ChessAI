@@ -10,14 +10,14 @@ from square import Square
 class Board:
     def __init__(self):
         self.grid = [[None for i in range(8)] for i in range(8)]    #square class, holds current piece and possible attacking pieces
-        self.white_locs = {}
-        self.black_locs = {}
+        self.whiteKingLoc = [7, 4]
+        self.blackKingLoc = [0, 4]
 
-        self.whiteInCheck = False
+        self.blackInCheck = False
         self.blackBlocks = []
         self.blackKingMoves = []
 
-        self.blackInCheck = False
+        self.whiteInCheck = False
         self.whiteBlocks = []
         self.whiteKingMoves = []
 
@@ -26,74 +26,67 @@ class Board:
 
 
     def initialize_board(self):
-        white_locs = self.white_locs
-        black_locs = self.black_locs
         grid = self.grid
         for i in range(ROWS):
             for j in range(COLS):
                 grid[i][j] = Square(i, j)
         
-        white_locs["pond"] = []
-        black_locs["pond"] = []
-        white_locs["knight"] = []
-        black_locs["knight"] = []
-        white_locs["bishop"] = []
-        black_locs["bishop"] = []
-        white_locs["rook"] = []
-        black_locs["rook"] = []
-        white_locs["queen"] = []
-        black_locs["queen"] = []
-        white_locs["king"] = []
-        black_locs["king"] = []
+        
         for i in range(8):
             grid[1][i].add_piece("black", "pond", "images/blackPond.png", 1, i)
             grid[6][i].add_piece("white", "pond", "images/whitePond.png", 6, i)
-            black_locs["pond"].append((1, i))
-            white_locs["pond"].append((6, i))
 
 
         grid[0][0].add_piece("black", "rook", "images/blackRook.png", 0, 0)
         grid[0][7].add_piece("black", "rook", "images/blackRook.png", 0, 7)
         grid[7][0].add_piece("white", "rook", "images/whiteRook.png", 7, 0)
         grid[7][7].add_piece("white", "rook", "images/whiteRook.png", 7, 7)
-        black_locs["rook"].append((0, 0))
-        black_locs["rook"].append((0, 7))
-        white_locs["rook"].append((7, 0))
-        white_locs["rook"].append((7, 7))
+        
 
         grid[0][1].add_piece("black", "knight", "images/blackKnight.png", 0, 1)
         grid[0][6].add_piece("black", "knight", "images/blackKnight.png", 0, 6)
         grid[7][1].add_piece("white", "knight", "images/whiteKnight.png", 7, 1)
         grid[7][6].add_piece("white", "knight", "images/whiteKnight.png", 7, 6)
-        black_locs["knight"].append((0, 1))
-        black_locs["knight"].append((0, 6))
-        white_locs["knight"].append((7, 1))
-        white_locs["knight"].append((7, 6))
         
 
         grid[0][2].add_piece("black", "bishop", "images/blackBishop.png", 0, 2)
         grid[0][5].add_piece("black", "bishop", "images/blackBishop.png", 0, 5)
         grid[7][2].add_piece("white", "bishop", "images/whiteBishop.png", 7, 2)
         grid[7][5].add_piece("white", "bishop", "images/whiteBishop.png", 7, 5)
-        black_locs["bishop"].append((0, 2))
-        black_locs["bishop"].append((0, 5))
-        white_locs["bishop"].append((7, 2))
-        white_locs["bishop"].append((7, 5))
+        
         
 
         grid[0][3].add_piece("black", "queen", "images/blackQueen.png", 0, 3)
         grid[0][4].add_piece("black", "king", "images/blackKing.png", 0, 4)
         grid[7][3].add_piece("white", "queen", "images/whiteQueen.png", 7, 3)
         grid[7][4].add_piece("white", "king", "images/whiteKing.png", 7, 4)
-        black_locs["queen"].append((0, 3))
-        black_locs["king"].append((0, 4))
-        white_locs["queen"].append((7, 3))
-        white_locs["king"].append((7, 4))
+        
         
 
+    def loadProtections(self):
+        # loads all potential squares being attacked/protected on the board through self.whiteprotected and self.blackprotected in the square class
+        grid = self.grid
 
-    def moveAnimation(self, surface, original_locations, final_locations):       # for AI
-        pass
+        #refresh protections
+        for row in range(ROWS):
+            for col in range(COLS):
+                self.grid[row][col].whiteprotected = False
+                self.grid[row][col].blackprotected = False
+        
+        for row in range(ROWS):
+            for col in range(COLS):
+                moves = self.get_moves(self.grid, grid[row][col].piece, row, col, grid[row][col].team)
+                team = grid[row][col].team
+                # since moves function includes moves for capturing, get rid of possible capture spots since that move is not a protection spot
+
+                for loc in moves:
+                    if grid[loc[0]][loc[1]].team == team or grid[loc[0]][loc[1]].piece == None:
+                        if (team == "white"):
+                            self.grid[loc[0]][loc[1]].whiteprotected = True
+                        elif (team == "black"):
+                            self.grid[loc[0]][loc[1]].blackprotected = True
+
+    
 
 
 
@@ -166,17 +159,17 @@ class Board:
                         if (grid[row-1][col-1].team == "black"):
                             moves.append([row-1, col-1])
                     
-                    
                 if (row >= 1 and row <= 5):
                     if (grid[row-1][col].piece == None):
                         moves.append([row-1, col])
+                    if (col >= 0 and col < COLS - 1):
+                        if (grid[row-1][col+1].team == "black"):
+                            moves.append([row-1, col+1])
+                    if (col > 0 and col <= COLS - 1):
+                        if (grid[row-1][col-1].team == "black"):
+                            moves.append([row-1, col-1])
 
-                if (row >= 1 and row <= 5 and col > 0 and col < COLS-1):  # Capturing
-                    if (grid[row-1][col-1].team == "black"):
-                        moves.append([row-1, col-1])
-                    if (grid[row-1][col+1].team == "black"):
-                        moves.append([row-1, col+1])
-                
+               
 
             elif (self.team == "black"):
                 
@@ -192,16 +185,17 @@ class Board:
                         if (grid[row+1][col-1].team == "white"):
                             moves.append([row+1, col-1])
                     
-                        
                 if (row >= 2 and row <= 6):
                     if (grid[row+1][col].piece == None):
                         moves.append([row+1, col])
+                    if (col >= 0 and col < COLS - 1):
+                        if (grid[row+1][col+1].team == "white"):
+                            moves.append([row+1, col+1])
+                    if (col > 0 and col <= COLS - 1):
+                        if (grid[row+1][col-1].team == "white"):
+                            moves.append([row+1, col-1])
 
-                if (row >= 2 and row <= 6 and col > 0 and col < COLS-1):  # Capturing
-                    if (grid[row+1][col-1].team == "white"):
-                        moves.append([row+1, col-1])
-                    if (grid[row+1][col+1].team == "white"):
-                        moves.append([row+1, col+1])
+                
 
 
         ##########################################
@@ -588,50 +582,50 @@ class Board:
         elif (piece == "king"):
             if team == "white":
                 if (row > 0 and col > 0):
-                    if (grid[row-1][col-1].piece == None or grid[row-1][col-1].team == "black"):
+                    if (grid[row-1][col-1].piece == None or (grid[row-1][col-1].team == "black" and grid[row-1][col-1].blackprotected == False)):
                         moves.append([row-1, col-1])
-                    if (grid[row-1][col].piece == None or grid[row][col].team == "black"):
+                    if (grid[row-1][col].piece == None or (grid[row-1][col].team == "black" and grid[row][col].blackprotected == False)):
                         moves.append([row-1, col])
-                    if (grid[row][col-1].piece == None or grid[row][col].team == "black"):
+                    if (grid[row][col-1].piece == None or (grid[row][col-1].team == "black" and grid[row][col].blackprotected == False)):
                         moves.append([row, col-1])
                 
                 if (row < ROWS-1 and col < COLS-1):
-                    if (grid[row+1][col+1].piece == None or grid[row+1][col+1].team == "black"):
+                    if (grid[row+1][col+1].piece == None or (grid[row+1][col+1].team == "black" and grid[row+1][col+1].blackprotected == False)):
                         moves.append([row+1, col+1])
-                    if (grid[row+1][col].piece == None or grid[row+1][col].team == "black"):
+                    if (grid[row+1][col].piece == None or (grid[row+1][col].team == "black" and grid[row+1][col].blackprotected == False)):
                         moves.append([row+1, col])
-                    if (grid[row][col+1].piece == None or grid[row][col+1].team == "black"):
+                    if (grid[row][col+1].piece == None or (grid[row][col+1].team == "black" and grid[row][col+1].blackprotected == False)):
                         moves.append([row, col+1])
                 
                 if (row > 0 and col < COLS-1):
-                    if (grid[row-1][col+1].piece == None or grid[row-1][col+1].team == "black"):
+                    if (grid[row-1][col+1].piece == None or (grid[row-1][col+1].team == "black" and grid[row-1][col+1].blackprotected == False)):
                         moves.append([row-1, col+1])
                 if (row < ROWS-1 and col > 0):
-                    if (grid[row+1][col-1].piece == None or grid[row+1][col-1].team == "black"):
+                    if (grid[row+1][col-1].piece == None or (grid[row+1][col-1].team == "black" and grid[row+1][col-1].blackprotected == False)):
                         moves.append([row+1, col-1])
             
             elif team == "black":
                 if (row > 0 and col > 0):
-                    if (grid[row-1][col-1].piece == None or grid[row-1][col-1].team == "white"):
+                    if (grid[row-1][col-1].piece == None or (grid[row-1][col-1].team == "white" and grid[row-1][col-1].whiteprotected == False)):
                         moves.append([row-1, col-1])
-                    if (grid[row-1][col].piece == None or grid[row][col].team == "white"):
+                    if (grid[row-1][col].piece == None or (grid[row-1][col].team == "white" and grid[row-1][col].whiteprotected == False)):
                         moves.append([row-1, col])
-                    if (grid[row][col-1].piece == None or grid[row][col].team == "white"):
+                    if (grid[row][col-1].piece == None or (grid[row][col-1].team == "white" and grid[row][col-1].whiteprotected == False)):
                         moves.append([row, col-1])
                 
                 if (row < ROWS-1 and col < COLS-1):
-                    if (grid[row+1][col+1].piece == None or grid[row+1][col+1].team == "white"):
+                    if (grid[row+1][col+1].piece == None or (grid[row+1][col+1].team == "white" and grid[row+1][col+1].whiteprotected == False)):
                         moves.append([row+1, col+1])
-                    if (grid[row+1][col].piece == None or grid[row+1][col].team == "white"):
+                    if (grid[row+1][col].piece == None or (grid[row+1][col].team == "white" and grid[row+1][col].whiteprotected == False)):
                         moves.append([row+1, col])
-                    if (grid[row][col+1].piece == None or grid[row][col+1].team == "white"):
+                    if (grid[row][col+1].piece == None or (grid[row][col+1].team == "white" and grid[row][col+1].whiteprotected == False)):
                         moves.append([row, col+1])
                 
                 if (row > 0 and col < COLS-1):
-                    if (grid[row-1][col+1].piece == None or grid[row-1][col+1].team == "white"):
+                    if (grid[row-1][col+1].piece == None or (grid[row-1][col+1].team == "white" and grid[row-1][col+1].whiteprotected == False)):
                         moves.append([row-1, col+1])
                 if (row < ROWS-1 and col > 0):
-                    if (grid[row+1][col-1].piece == None or grid[row+1][col-1].team == "white"):
+                    if (grid[row+1][col-1].piece == None or (grid[row+1][col-1].team == "white" and grid[row+1][col-1].whiteprotected == False)):
                         moves.append([row+1, col-1])
         
         return moves
@@ -647,10 +641,10 @@ class Board:
 
         if (attacking_team == "white"):
             
-            kingloc = [self.black_locs["king"][0][0], self.black_locs["king"][0][1]]
+            kingloc = copy.deepcopy(self.blackKingLoc)
             attacking_pieces = []
 
-            # check and get black attacking pieces towards the king
+            # check and get white attacking pieces towards the king
             for row in range(ROWS):
                 for col in range(COLS):
                     if self.grid[row][col].team == "white":
@@ -665,8 +659,8 @@ class Board:
                 # check if there are any pieces that can block the checkmate
                 for row in range(ROWS):
                     for col in range(COLS):
-                        if self.grid[row][col].team == "black":
-                            pieceMoves = self.get_moves(self.grid[row][col].piece, row, col, "black")
+                        if self.grid[row][col].team == "black" and self.grid[row][col].piece != "king":
+                            pieceMoves = self.get_moves(self.grid[row][col].piece, row, col, "black", self.grid)
                             for move in pieceMoves:
                                 copygrid = copy.deepcopy(self.grid)
                                 savePiece = copy.deepcopy(self.grid[row][col])
@@ -678,10 +672,11 @@ class Board:
                                         result.append(1)
                                 if len(result) == len(attacking_pieces):
                                     blackInCheckmate = False
-                                    self.blackBlocks.append(savePiece, move[0], move[1])    # saves the exact piece and the place on the grid it can move
+                                    self.blackBlocks.append([savePiece, move[0], move[1]])    # saves the exact piece and the place on the grid it can move as *Square object, row, col*
                 
                 # check if the king can move to avoid the checkmate
-                for moves in range(len(self.get_moves(self.grid[kingloc[0]][kingloc[1]]))):
+                kingMoves = self.get_moves(self.grid[kingloc[0]][kingloc[1]].piece, kingloc[0], kingloc[1], "black", self.grid)
+                for moves in kingMoves:
                     copygrid = copy.deepcopy(self.grid)
                     initialpos = copy.deepcopy(copygrid[kingloc[0]][kingloc[1]])
                     copygrid[moves[0]][moves[1]] = initialpos
@@ -693,19 +688,19 @@ class Board:
                             result.append(1)
                     if len(result) == len(attacking_pieces):
                         blackInCheckmate = False
-                        self.blackKingMoves.append(self.grid[kingloc[0]][kingloc[1]])
+                        self.blackKingMoves.append(copykingloc)
 
                 
 
                 if (blackInCheckmate == True):        # black is in checkmate --> game over condition
                     self.blackInCheckmate = True
-                
+                    print("BLACK IN CHECKMATE GAME OVER")
             else:       # not in check
                 pass
 
         elif (attacking_team == "black"):
             
-            kingloc = [self.black_locs["king"][0][0], self.black_locs["king"][0][1]]
+            kingloc = copy.deepcopy(self.whiteKingLoc)
             attacking_pieces = []
 
             # check and get black attacking pieces towards the king
@@ -723,8 +718,8 @@ class Board:
                 # check if there are any pieces that can block the checkmate
                 for row in range(ROWS):
                     for col in range(COLS):
-                        if self.grid[row][col].team == "black":
-                            pieceMoves = self.get_moves(self.grid[row][col].piece, row, col, "black")
+                        if self.grid[row][col].team == "black" and self.grid[row][col].piece != "king":
+                            pieceMoves = self.get_moves(self.grid[row][col].piece, row, col, "black", self.grid)
                             for move in pieceMoves:
                                 copygrid = copy.deepcopy(self.grid)
                                 savePiece = copy.deepcopy(self.grid[row][col])
@@ -735,11 +730,12 @@ class Board:
                                     if kingloc not in self.get_moves(attacking_pieces[i].piece, attacking_pieces[i].row, attacking_pieces[i].col, attacking_pieces[i].team, copygrid): # add grid part to function
                                         result.append(1)
                                 if len(result) == len(attacking_pieces):
-                                    blackInCheckmate = False
-                                    self.whiteBlocks.append(savePiece, move[0], move[1])    # saves the exact piece and the place on the grid it can move
+                                    whiteInCheckmate = False
+                                    self.whiteBlocks.append([savePiece, move[0], move[1]])    # saves the exact piece and the place on the grid it can move
                 
                 # check if the king can move to avoid the checkmate
-                for moves in range(len(self.get_moves(self.grid[kingloc[0]][kingloc[1]]))):
+                kingMoves = self.get_moves(self.grid[row][col].piece, row, col, "black", self.grid)
+                for moves in kingMoves:
                     copygrid = copy.deepcopy(self.grid)
                     initialpos = copy.deepcopy(copygrid[kingloc[0]][kingloc[1]])
                     copygrid[moves[0]][moves[1]] = initialpos
@@ -750,13 +746,14 @@ class Board:
                         if copykingloc not in self.get_moves(attacking_pieces[i].piece, attacking_pieces[i].row, attacking_pieces[i].col, attacking_pieces[i].team, copygrid): # add grid part to function
                             result.append(1)
                     if len(result) == len(attacking_pieces):
-                        blackInCheckmate = False
-                        self.whiteKingMoves.append(self.grid[kingloc[0]][kingloc[1]])
+                        whiteInCheckmate = False
+                        self.whiteKingMoves.append(copykingloc)
 
                 
 
                 if (whiteInCheckmate == True):        # black is in checkmate --> game over condition
                     self.whiteInCheckmate = True
+                    print("WHITE IN CHECKMATE GAME OVER")
                 
             
             

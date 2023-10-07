@@ -10,6 +10,8 @@ class Square:
         self.row = row
         self.col = col
         self.moves = []
+        self.whiteprotected = False
+        self.blackprotected = False
         self.points = 0
 
 

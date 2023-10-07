@@ -1,0 +1,4 @@
+bugs:
+
+- black knight moves to block check and black king disappears
+- king moves into pond check
