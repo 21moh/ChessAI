@@ -86,7 +86,15 @@ class Board:
                         elif (team == "black"):
                             self.grid[loc[0]][loc[1]].blackprotected = True
 
-    
+    def printProtections(self): # debugging purposes
+        for row in range(ROWS):
+            for col in range(COLS):
+                if (self.grid[row][col].whiteprotected == True):
+                    print("W ")
+                elif (self.grid[row][col].blackprotected == True):
+                    print("B ")
+            print()
+
 
 
 

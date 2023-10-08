@@ -29,6 +29,7 @@ class Main:
         game.board.initialize_board()
 
         turn = "white"
+        printed = False
 
         while running:
             game.show_board(screen)
@@ -38,6 +39,10 @@ class Main:
 
         #############################################     WHITE          #################################################################################################################
             game.board.loadProtections()
+            if printed == False:
+                game.board.printProtections()
+            printed = True
+            print("CHECK")
             if turn == "white":
 
                 if dragger.dragging == True:
