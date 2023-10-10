@@ -42,7 +42,7 @@ class Main:
             if printed == False:
                 game.board.printProtections()
             printed = True
-            print("CHECK")
+            #print("CHECK")
             if turn == "white":
 
                 if dragger.dragging == True:
@@ -193,12 +193,7 @@ class Main:
                                             if (game.board.grid[dragger.initial_row][dragger.initial_col] in copylist):
                                                 for i in range(len(game.board.whiteBlocks)):
                                                     if game.board.whiteBlocks[i][0] == self.game.board.grid[dragger.initial_row][dragger.initial_col] and clicked_row == game.board.whiteBlocks[i][1] and clicked_col == game.board.whiteBlocks[i][2]:
-                                                        copyinitialrow = dragger.initial_row
-                                                        copyinitialcol = dragger.initial_col
-                                                        attacking_piece = game.board.grid[dragger.initial_row][dragger.initial_col].piece
-
-                                                        self.game.board.white_locs[attacking_piece].remove((copyinitialrow, copyinitialcol)) 
-                                                        self.game.board.white_locs[attacking_piece].append((clicked_row, clicked_col))
+                                                        
                                                         self.game.board.grid[clicked_row][clicked_col] = copylist[i]
                                                         game.board.grid[clicked_row][clicked_col].row = clicked_row
                                                         game.board.grid[clicked_row][clicked_col].col = clicked_col
@@ -217,12 +212,7 @@ class Main:
                                                         break
                                             
                                             elif (dragger.piece == "king" and [clicked_row, clicked_col] in kinglist):
-                                                copyinitialrow = dragger.initial_row
-                                                copyinitialcol = dragger.initial_col
-                                                attacking_piece = game.board.grid[dragger.initial_row][dragger.initial_col].piece
-
-                                                self.game.board.white_locs[attacking_piece].remove((copyinitialrow, copyinitialcol)) 
-                                                self.game.board.white_locs[attacking_piece].append((clicked_row, clicked_col))
+                                    
                                                 
                                                 self.game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
                                                 game.board.grid[clicked_row][clicked_col].row = clicked_row
