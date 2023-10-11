@@ -4,7 +4,6 @@ import sys
 from const import *
 from board import Board
 from dragger import Dragger
-from Ai import AI
 
 
 class Game:

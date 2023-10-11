@@ -2,3 +2,5 @@ bugs:
 
 - black knight moves to block check and black king disappears
 - king moves into pond check
+- pond skips over piece -- fixed
+- check's for white does not work

@@ -39,11 +39,25 @@ class Main:
 
         #############################################     WHITE          #################################################################################################################
             game.board.loadProtections()
-            if printed == False:
-                game.board.printProtections()
-            printed = True
-            #print("CHECK")
-            if turn == "white":
+            #game.board.printProtections()
+
+            if self.game.board.whiteInCheckmate == True:
+                img = pygame.image.load("images/black wins.png")
+                screen.blit(img, (-50, 100))
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+
+            if self.game.board.blackInCheckmate == True:
+                img = pygame.image.load("images/white wins.png")
+                screen.blit(img, (-50, 100))
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+            
+            elif turn == "white":
 
                 if dragger.dragging == True:
                     clicked_row = dragger.mouseY // CELL_SIZE
@@ -101,9 +115,6 @@ class Main:
                             clicked_col = dragger.mouseX // CELL_SIZE
 
                             
-                            
-
-                                    
                             #print(game.board.grid[dragger.initial_row][dragger.initial_col].moves)
 
                             #implement move refiner --> checks for blocked moves in the list
@@ -235,6 +246,7 @@ class Main:
                             dragger.dragging = False
                             dragger.piece = None
                             dragger.object = None
+                            game.board.printProtections()
 
 
                 
@@ -319,35 +331,42 @@ class Main:
 
                     else: # move king out of check
                         moveChoice = random.randint(0,len(game.board.blackKingMoves)-1)
-                        move = self.game.board.blackKingMoves[moveChoice]
+                        move = self.game.board.blackKingMoves
+                        kingMoved = False
 
-                        piece = game.board.grid[move[0]][move[1]].piece
-                        print(move[0], move[1])
-                        print(piece)
+                        for index in move:
+                            if game.board.grid[index[0]][index[1]].whiteprotected == False:
+                                game.board.grid[index[0]][index[1]] = game.board.grid[self.game.board.blackKingLoc[0]][self.game.board.blackKingLoc[1]]
+                                game.board.grid[index[0]][index[1]].row = index[0]
+                                game.board.grid[index[0]][index[1]].col = index[1]
+                                game.board.grid[index[0]][index[1]].moves = []
+                                game.board.grid[self.game.board.blackKingLoc[0]][self.game.board.blackKingLoc[1]] = Square(index1, index2)
+
+                                game.board.blackKingLoc = [index[0], index[1]]
+
+                                self.game.board.blackInCheck = False
+                                self.game.board.blackBlocks = []
+                                self.game.board.blackKingMoves = []
+                                game.board.checkChecker("black")
+                                turn = "white"
+                                kingMoved = True
+                                break
+
+                        if kingMoved == False:
+                            self.game.board.blackInCheckmate = True
 
                         
 
-                        game.board.grid[move[0]][move[1]] = game.board.grid[self.game.board.blackKingLoc[0]][self.game.board.blackKingLoc[1]]
-                        game.board.grid[move[0]][move[1]].row = move[0]
-                        game.board.grid[move[0]][move[1]].col = move[1]
-                        game.board.grid[move[0]][move[1]].moves = []
-                        game.board.grid[self.game.board.blackKingLoc[0]][self.game.board.blackKingLoc[1]] = Square(index1, index2)
+                        
 
-                        game.board.blackKingLoc = [move[0], move[1]]
-
-                        self.game.board.blackInCheck = False
-                        self.game.board.blackBlocks = []
-                        self.game.board.blackKingMoves = []
-                        game.board.checkChecker("black")
-                        turn = "white"
+                        
                         
                     
 
 
             pygame.display.flip()
     
-    def randomMoveGenerator(self):
-        pass
+    
 
 
     
