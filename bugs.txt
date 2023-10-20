@@ -1,6 +1,20 @@
 bugs:
 
 - black knight moves to block check and black king disappears
-- king moves into pond check
+- king moves into pond check, and checks in general
+- Black in checkmate when Queen/other pieces can take attacking piece - checkChecker function
 - pond skips over piece -- fixed
 - check's for white does not work
+
+
+need to implement function to check if king is moving into a check
+fix if pieces can kill opponent piece placing king in check
+if white in check, game is not functional.
+
+need to implement black castling
+
+
+AI
+
+For each move, implement an algorithm which goes through every possible move for a certain move through copies of the game
+and choose the move with the most favorable outcome for checkmate -> alpha beta pruning

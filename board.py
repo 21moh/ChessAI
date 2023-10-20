@@ -107,6 +107,18 @@ class Board:
         print()
         
 
+    def CanCastle(self, team):
+        if (team == "white"):
+            if (self.whiteKingLoc == [7,4] and self.grid[7,7].piece == "rook") or (self.whiteKingLoc == [7,4] and self.grid[7,0].piece == "rook"):
+                return True
+            else:
+                return False
+        if (team == "black"):
+            if (self.blackKingLoc == [0,4] and self.grid[0,7].piece == "rook") or (self.whiteKingLoc == [0,4] and self.grid[0,0].piece == "rook"):
+                return True
+            else:
+                return False
+
             
                 
     

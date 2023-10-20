@@ -114,11 +114,6 @@ class Main:
                             clicked_row = dragger.mouseY // CELL_SIZE
                             clicked_col = dragger.mouseX // CELL_SIZE
 
-                            
-                            #print(game.board.grid[dragger.initial_row][dragger.initial_col].moves)
-
-                            #implement move refiner --> checks for blocked moves in the list
-
                             # checks if move is possible from the move list
                             result = (game.board.grid[dragger.initial_row][dragger.initial_col].moves).count([clicked_row, clicked_col])        # checks for valid placement
 
@@ -130,7 +125,9 @@ class Main:
                                             
                                             if dragger.piece == "king":
                                                 
-                                                if game.board.grid[clicked_row][clicked_col].blackprotected == False:
+                                                if game.board.grid[clicked_row][clicked_col].blackprotected == False:       # move for King
+
+                                                    
                                                     game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
                                                     game.board.grid[clicked_row][clicked_col].row = clicked_row
                                                     game.board.grid[clicked_row][clicked_col].col = clicked_col
@@ -140,25 +137,30 @@ class Main:
                                                     turn = "black"
                                                     game.board.whiteKingLoc = [clicked_row, clicked_col]
                                                     game.board.checkChecker("white")
-                                                    
 
+                                            else:               # move piece into empty square
 
-
-                                            else:
-                                            
-                                                # copy all piece information into new Square and Piece
-                                                game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
-                                                game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                                game.board.grid[clicked_row][clicked_col].col = clicked_col
-                                                game.board.grid[clicked_row][clicked_col].moves = []
-                                                game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-                                                game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
-                                                turn = "black"
-                                                game.board.checkChecker("white")
+                                                if dragger.piece.piece == "pond" and clicked_row == 0:     # transform pond into Queen
+                                                    print("accessed")
+                                                    game.board.grid[clicked_row][clicked_row].piece = "queen"
+                                                    game.board.grid[clicked_row][clicked_col].team = "white"
+                                                    game.board.grid[clicked_row][clicked_col].image = "images/whiteQueen.png"
+                                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                                    game.board.checkChecker("white")
+                                                else:
+                                                    # shift all piece information into new Square and Piece for capture
+                                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+                                                    turn = "black"
+                                                    game.board.checkChecker("white")
 
 
                             
-
                                         elif game.board.grid[clicked_row][clicked_col].piece == None and game.board.grid[dragger.initial_row][dragger.initial_col].team == "white" and clicked_row < ROWS and clicked_col < COLS:
 
                                             if dragger.piece == "king":
@@ -175,17 +177,29 @@ class Main:
 
 
                                             else:
-                                                # copy all piece information into new Square and Piece
-                                                game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
-                                                game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                                game.board.grid[clicked_row][clicked_col].col = clicked_col
-                                                game.board.grid[clicked_row][clicked_col].moves = []
-                                                game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-                                                game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
-                                                turn = "black"
-                                                if dragger.piece == 'king':
-                                                    game.board.whiteKingLoc = [clicked_row, clicked_col]
-                                                game.board.checkChecker("white")
+                                                print(dragger.piece.piece, clicked_row)
+                                                if dragger.piece.piece == "pond" and clicked_row == 0:     # transform pond into Queen
+                                                    print("accessed")
+                                                    game.board.grid[clicked_row][clicked_row].piece = "queen"
+                                                    game.board.grid[clicked_row][clicked_col].team = "white"
+                                                    game.board.grid[clicked_row][clicked_col].image = "images/whiteQueen.png"
+                                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                                    game.board.checkChecker("white")
+
+
+                                                else:
+                                                    # copy all piece information into new Square and Piece
+                                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+                                                    turn = "black"
+                                                    if dragger.piece == 'king':
+                                                        game.board.whiteKingLoc = [clicked_row, clicked_col]
+                                                    game.board.checkChecker("white")
 
                                     elif (self.game.board.whiteInCheck == True):
                                         
