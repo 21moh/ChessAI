@@ -16,3 +16,20 @@ AI
 
 For each move, implement an algorithm which goes through every possible move for a certain move through copies of the game
 and choose the move with the most favorable outcome for checkmate -> alpha beta pruning
+
+rework checkChecker function:
+idea: Use protections for king moves
+
+for blocking:
+
+iterate through the entire board for pieces of the same team, example white pieces for white king
+get moves function for the white piece 
+for each move from the white piece from the get_moves function, create a copygrid
+from the copygrid, place the white piece on the grid using that move and use the loadprotections function
+on that grid
+if black is still on the king, then blocking failed. 
+Keep going until blocking is successful
+
+if blocking is successful, append the move to blockings in the board class
+
+if there are no moves in blocking, then go to king moves
