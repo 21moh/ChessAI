@@ -51,9 +51,7 @@ class Main:
                     # creates all possible move locations with piece
                     game.board.grid[dragger.initial_row][dragger.initial_col].moves = game.board.get_moves(dragger.piece.piece, dragger.initial_row, dragger.initial_col, dragger.piece.team, game.board.grid)
                     
-                    #print(game.board.grid[dragger.initial_row][dragger.initial_col].moves)
                     # load all possible locations the piece can be placed
-                    
                     game.board.loadPlacements(game.board.grid[dragger.initial_row][dragger.initial_col].moves, turn, screen)
 
                     
@@ -222,6 +220,7 @@ class Main:
 
             # if turn equals black --> AI SECTION
             elif turn == "black":
+                
                 game.board.checkChecker("white", game.board.grid)
 
 
@@ -282,17 +281,24 @@ class Main:
                                 sys.exit()
 
                     else:
-                        
+                        print("THIS IS ACCESSED")
+                        print("=====INFO=====")
+                        game.board.printProtections()
+                        print(game.board.black_move)
+                        for i in range(len(game.board.black_movable)):
+                            print("Black movable pieces:", game.board.black_movable[i].piece)
+                        print(len(game.board.black_movable))
+                        print(len(game.board.black_move))
                         index = random.randint(0,len(game.board.black_move)-1)
-                        game.board.grid[game.board.black_move[0]][game.board.black_move[1]] = game.board.black_movable[index]
+                        game.board.grid[game.board.black_move[index][0]][game.board.black_move[index][1]] = game.board.black_movable[index]
                         row = game.board.black_movable[index].row
                         col = game.board.black_movable[index].col
                         game.board.grid[row][col] = Square(row, col)
-                        game.board.grid[game.board.black_move[0]][game.board.black_move[1]].row = game.board.black_move[0]
-                        game.board.grid[game.board.black_move[0]][game.board.black_move[1]].col = game.board.black_move[1]
-                        game.board.grid[game.board.black_move[0]][game.board.black_move[1]].moves = []
+                        game.board.grid[game.board.black_move[index][0]][game.board.black_move[index][1]].row = game.board.black_move[index][0]
+                        game.board.grid[game.board.black_move[index][0]][game.board.black_move[index][1]].col = game.board.black_move[index][1]
+                        game.board.grid[game.board.black_move[index][0]][game.board.black_move[index][1]].moves = []
                         if dragger.piece == "king":
-                            game.board.blackKingLoc = [game.board.black_move[0], game.board.black_move[1]]
+                            game.board.blackKingLoc = [game.board.black_move[index][0], game.board.black_move[index][1]]
 
                         game.board.blackInCheck = False
                         game.board.black_move = []
