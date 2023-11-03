@@ -203,28 +203,33 @@ class Main:
                                                         turn = "black"
                                                         if dragger.piece == 'king':
                                                             game.board.whiteKingLoc = [clicked_row, clicked_col]
+                                                        game.board.checkChecker("white", game.board.grid)
 
                                     elif (self.game.board.whiteInCheck == True):
                                         
                                         print("WHITE IN CHECK")
-                                        game.board.InCheckMoves("white")
-                                        
-                                        if game.board.grid[dragger.initial_row][dragger.initial_col] in game.board.white_movable:
-                                            if [clicked_row, clicked_col] in game.board.move:
-                                                game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
-                                                game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                                game.board.grid[clicked_row][clicked_col].col = clicked_col
-                                                game.board.grid[clicked_row][clicked_col].moves = []
-                                                game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-                                                game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
-                                                turn = "black"
-                                                if dragger.piece == 'king':
-                                                    game.board.whiteKingLoc = [clicked_row, clicked_col]
-                                                game.board.whiteInCheck = False
-                                                game.board.white_movable = []
-                                                game.board.white_move = []
-                                                game.board.checkChecker("white", game.board.grid)
-
+                                        for i in range(len(game.board.white_movable)):
+                                            if game.board.white_move[i][0] == clicked_row and game.board.white_move[i][1] == clicked_col:
+                                                print("passed wall 1")
+                                                x = game.board.white_move[i][0]
+                                                y = game.board.white_move[i][1]
+                                                print("move towards coords:", x,y)
+                                                if clicked_row == x and clicked_col == y:
+                                                    print("passed wall 2")
+                                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+                                                    game.board.white_movable = []
+                                                    game.board.white_move = []
+                                                    turn = "white"
+                                                    game.board.checkChecker("white", game.board.grid)
+                                                    if dragger.piece.piece == "king":
+                                                        game.board.whiteKingLoc = [clicked_row, clicked_col]
+                                            
+                                                    break
                                         
 
 
@@ -395,47 +400,31 @@ class Main:
                                         
                                         print("BLACK IN CHECK")
                                         
-                                        if game.board.grid[dragger.initial_row][dragger.initial_col] == "king":
-                                            print("this is accessed instead")
-                                            if game.board.grid[clicked_row][clicked_col].whiteprotected == False:
-                                                game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
-                                                game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                                game.board.grid[clicked_row][clicked_col].col = clicked_col
-                                                game.board.grid[clicked_row][clicked_col].moves = []
-                                                game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-                                                game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
-                                                game.board.blackKingLoc = [clicked_row, clicked_col]
-                                                game.board.black_movable = []
-                                                game.board.black_move = []
-                                                turn = "white"
-
-                                        else:
-                                            print("wall 0")
-                                            print(game.board.black_movable)
-                                            for i in range(len(game.board.black_movable)):
-                                                if game.board.black_move[i][0] == clicked_row and game.board.black_move[i][1] == clicked_col:
-                                                    print("passed wall 1")
-                                                    x = game.board.black_move[i][0]
-                                                    y = game.board.black_move[i][1]
-                                                    print("move towards coords:", x,y)
-                                                    if clicked_row == x and clicked_col == y:
-                                                        print("passed wall 2")
-                                                        game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
-                                                        game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                                        game.board.grid[clicked_row][clicked_col].col = clicked_col
-                                                        game.board.grid[clicked_row][clicked_col].moves = []
-                                                        game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-                                                        game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
-                                                        game.board.black_movable = []
-                                                        game.board.black_move = []
-                                                        turn = "white"
-                                                        game.board.checkChecker("black", game.board.grid)
-                                                        break
                                         
-
-                                        
-
-
+                                        print("wall 0")
+                                        print(game.board.black_movable)
+                                        for i in range(len(game.board.black_movable)):
+                                            if game.board.black_move[i][0] == clicked_row and game.board.black_move[i][1] == clicked_col:
+                                                print("passed wall 1")
+                                                x = game.board.black_move[i][0]
+                                                y = game.board.black_move[i][1]
+                                                print("move towards coords:", x,y)
+                                                if clicked_row == x and clicked_col == y:
+                                                    print("passed wall 2")
+                                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                                    game.board.grid[clicked_row][clicked_col].moves = []
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+                                                    game.board.black_movable = []
+                                                    game.board.black_move = []
+                                                    turn = "white"
+                                                    game.board.checkChecker("black", game.board.grid)
+                                                    if dragger.piece.piece == "king":
+                                                        game.board.blackKingLoc = [clicked_row, clicked_col]
+                                            
+                                                    break
                                         
                                         
                             dragger.dragging = False

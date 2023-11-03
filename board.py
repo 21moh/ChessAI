@@ -1224,20 +1224,38 @@ class Board:
         
         if (defending_team == "white"):
             self.white_movable = [] # holds Square Object
-            self.white_move = []       # holds corresponding move as a list --> index of move matches index of movable_pieces
-            for row in range(ROWS):
-                for col in range(COLS):
-                    piece_moves = self.get_moves(self.grid[row][col].piece, row, col, "white", self.grid)
-                    for move in piece_moves:
-                        copygrid = copy.deepcopy(self.grid)
-                        save_initial = copy.deepcopy(copygrid[row][col])
-                        copygrid[move[0]][move[1]] = save_initial
-                        copygrid[row][col] = Square(row, col)
-                        self.loadProtections2(copygrid)
-                        if copygrid[self.whiteKingLoc[0]][self.whiteKingLoc[1]].blackprotected == False:
-                            self.white_movable.append(save_initial)
-                            self.white_move.append([move[0], move[1]])
-
+            self.white_move = []   # holds corresponding move as a list --> index of move matches index of movable_pieces
+            if self.whiteInCheck == True:
+                for row in range(ROWS):
+                    for col in range(COLS):
+                        if self.grid[row][col].team == "white":
+                            piece_moves = self.get_moves(self.grid[row][col].piece, row, col, "white", self.grid)
+                            piece = self.grid[row][col].piece
+                            for move in piece_moves:
+                                copygrid = copy.deepcopy(self.grid)
+                                copykingloc = copy.deepcopy(self.whiteKingLoc)
+                                self.loadProtections2(copygrid)
+                                print("moving piece:", self.grid[row][col].piece, "from", [row],[col],"to square", move)
+                                self.printProtections2(copygrid)
+                                save_initial = copy.deepcopy(copygrid[row][col])
+                                copygrid[move[0]][move[1]] = save_initial
+                                copygrid[row][col] = Square(row, col)
+                                copygrid[move[0]][move[1]].row = move[0]
+                                copygrid[move[0]][move[1]].col = move[1]
+                                self.loadProtections2(copygrid)
+                                if piece == "king":
+                                    copykingloc = [move[0], move[1]]
+                                if copygrid[copykingloc[0]][copykingloc[1]].blackprotected == False:
+                                    print("adding move to available moves")
+                                    self.white_movable.append(save_initial)
+                                    self.white_move.append([move[0], move[1]])
+                                    print()
+                                    print()
+                                else:
+                                    print("move not added")
+                                    print()
+                                    print()
+            
             if len(self.white_movable) == 0:
                 self.whiteInCheckmate = True
 
@@ -1250,8 +1268,10 @@ class Board:
                     for col in range(COLS):
                         if self.grid[row][col].team == "black":
                             piece_moves = self.get_moves(self.grid[row][col].piece, row, col, "black", self.grid)
+                            piece = self.grid[row][col].piece
                             for move in piece_moves:
                                 copygrid = copy.deepcopy(self.grid)
+                                copykingloc = copy.deepcopy(self.blackKingLoc)
                                 self.loadProtections2(copygrid)
                                 print("moving piece:", self.grid[row][col].piece, "from", [row],[col],"to square", move)
                                 self.printProtections2(copygrid)
@@ -1261,8 +1281,9 @@ class Board:
                                 copygrid[move[0]][move[1]].row = move[0]
                                 copygrid[move[0]][move[1]].col = move[1]
                                 self.loadProtections2(copygrid)
-                                print("black king location:", self.blackKingLoc[0], self.blackKingLoc[1])
-                                if copygrid[self.blackKingLoc[0]][self.blackKingLoc[1]].whiteprotected == False:
+                                if piece == "king":
+                                    copykingloc = [move[0], move[1]]
+                                if copygrid[copykingloc[0]][copykingloc[1]].whiteprotected == False:
                                     print("adding move to available moves")
                                     self.black_movable.append(save_initial)
                                     self.black_move.append([move[0], move[1]])
