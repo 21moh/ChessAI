@@ -62,6 +62,9 @@ class Main:
             if turn == "white":
 
                 if dragger.dragging == True:
+                    
+                    print(dragger.piece.piece)
+
                     clicked_row = dragger.mouseY // CELL_SIZE
                     clicked_col = dragger.mouseX // CELL_SIZE
 
@@ -143,13 +146,8 @@ class Main:
                                                 else:               # move piece into empty square
 
                                                     if dragger.piece.piece == "pond" and clicked_row == 0:     # transform pond into Queen
-                                                        print("WHITE POND PROMOTION ACCESSED")
-                                                        game.board.grid[clicked_row][clicked_row].piece = "queen"
-                                                        game.board.grid[clicked_row][clicked_col].team = "white"
-                                                        game.board.grid[clicked_row][clicked_col].image = "images/whiteQueen.png"
-                                                        game.board.grid[clicked_row][clicked_col].moves = []
-                                                        game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                                        game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                                        game.board.grid[clicked_row][clicked_col] = Square(clicked_row, clicked_col)
+                                                        game.board.grid[clicked_row][clicked_col].add_piece("white", "queen", "images/whiteQueen.png", clicked_row, clicked_col)
                                                         game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
                                                         game.board.checkChecker("white", game.board.grid)
                                                         turn = "black"
@@ -186,11 +184,8 @@ class Main:
 
                                                 else:
                                                     if dragger.piece.piece == "pond" and clicked_row == 0:     # transform pond into Queen
-                                                        print("POND PROMOTION ACCESSED")
-                                                        game.board.grid[clicked_row][clicked_row].piece = "queen"
-                                                        game.board.grid[clicked_row][clicked_col].team = "white"
-                                                        game.board.grid[clicked_row][clicked_col].image = "images/whiteQueen.png"
-                                                        game.board.grid[clicked_row][clicked_col].moves = []
+                                                        game.board.grid[clicked_row][clicked_col] = Square(clicked_row, clicked_col)
+                                                        game.board.grid[clicked_row][clicked_col].add_piece("white", "queen", "images/whiteQueen.png", clicked_row, clicked_col)
                                                         game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
                                                         game.board.checkChecker("white", game.board.grid)
                                                         turn = "black"
