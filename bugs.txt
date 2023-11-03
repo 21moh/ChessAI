@@ -1,35 +1,3 @@
 bugs:
 
-- king moves into pond check, and checks in general
-- Black in checkmate when Queen/other pieces can take attacking piece - checkChecker function
-- check's for white does not work
-
-
-need to implement function to check if king is moving into a check
-fix if pieces can kill opponent piece placing king in check
-if white in check, game is not functional.
-
-need to implement black castling
-
-
-AI
-
-For each move, implement an algorithm which goes through every possible move for a certain move through copies of the game
-and choose the move with the most favorable outcome for checkmate -> alpha beta pruning
-
-rework checkChecker function:
-idea: Use protections for king moves
-
-for blocking:
-
-iterate through the entire board for pieces of the same team, example white pieces for white king
-get moves function for the white piece 
-for each move from the white piece from the get_moves function, create a copygrid
-from the copygrid, place the white piece on the grid using that move and use the loadprotections function
-on that grid
-if black is still on the king, then blocking failed. 
-Keep going until blocking is successful
-
-if blocking is successful, append the move to blockings in the board class
-
-if there are no moves in blocking, then go to king moves
+with promoted queen at black knight origin square, move checker thinks the piece is a knight not a queen
