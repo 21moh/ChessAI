@@ -1,3 +1,5 @@
 bugs:
 
 with promoted queen at black knight origin square, move checker thinks the piece is a knight not a queen
+
+pond to queen promotion

@@ -1235,8 +1235,6 @@ class Board:
                                 copygrid = copy.deepcopy(self.grid)
                                 copykingloc = copy.deepcopy(self.whiteKingLoc)
                                 self.loadProtections2(copygrid)
-                                print("moving piece:", self.grid[row][col].piece, "from", [row],[col],"to square", move)
-                                self.printProtections2(copygrid)
                                 save_initial = copy.deepcopy(copygrid[row][col])
                                 copygrid[move[0]][move[1]] = save_initial
                                 copygrid[row][col] = Square(row, col)
@@ -1246,15 +1244,9 @@ class Board:
                                 if piece == "king":
                                     copykingloc = [move[0], move[1]]
                                 if copygrid[copykingloc[0]][copykingloc[1]].blackprotected == False:
-                                    print("adding move to available moves")
                                     self.white_movable.append(save_initial)
                                     self.white_move.append([move[0], move[1]])
-                                    print()
-                                    print()
-                                else:
-                                    print("move not added")
-                                    print()
-                                    print()
+
             
             if len(self.white_movable) == 0:
                 self.whiteInCheckmate = True
@@ -1273,8 +1265,7 @@ class Board:
                                 copygrid = copy.deepcopy(self.grid)
                                 copykingloc = copy.deepcopy(self.blackKingLoc)
                                 self.loadProtections2(copygrid)
-                                print("moving piece:", self.grid[row][col].piece, "from", [row],[col],"to square", move)
-                                self.printProtections2(copygrid)
+                                #print("moving piece:", self.grid[row][col].piece, "from", [row],[col],"to square", move)
                                 save_initial = copy.deepcopy(copygrid[row][col])
                                 copygrid[move[0]][move[1]] = save_initial
                                 copygrid[row][col] = Square(row, col)
@@ -1284,15 +1275,9 @@ class Board:
                                 if piece == "king":
                                     copykingloc = [move[0], move[1]]
                                 if copygrid[copykingloc[0]][copykingloc[1]].whiteprotected == False:
-                                    print("adding move to available moves")
                                     self.black_movable.append(save_initial)
                                     self.black_move.append([move[0], move[1]])
-                                    print()
-                                    print()
-                                else:
-                                    print("move not added")
-                                    print()
-                                    print()
+
             
             if len(self.black_movable) == 0:
                 self.blackInCheckmate = True
