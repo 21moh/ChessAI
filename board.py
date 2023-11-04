@@ -207,15 +207,68 @@ class Board:
 
     def CanCastle(self, team):
         if (team == "white"):
-            if (self.whiteKingLoc == [7,4] and self.grid[7,7].piece == "rook") or (self.whiteKingLoc == [7,4] and self.grid[7,0].piece == "rook"):
-                return True
-            else:
-                return False
+            directions = []
+            if self.whiteKingLoc == [7,4] and self.grid[7][7].piece == "rook" and self.whiteInCheck == False:
+                copygrid = copy.deepcopy(self.grid)
+                if copygrid[7][5].piece == None and copygrid[7][6].piece == None:
+                    saveKing = copy.deepcopy(copygrid[7][4])
+                    copygrid[7][6] = saveKing
+                    copygrid[7][4] = Square(7, 4)
+                    saveRook = copy.deepcopy(copygrid[7][7])
+                    copygrid[7][5] = saveRook
+                    copygrid[7][7] = Square(7,7)
+                    self.loadProtections2(copygrid)
+                    if copygrid[7][6].blackprotected == False:
+                        directions.append("right")
+                
+            if self.whiteKingLoc == [7,4] and self.grid[7][0].piece == "rook" and self.whiteInCheck == False:
+                copygrid = copy.deepcopy(self.grid)
+                if copygrid[7][1].piece == None and copygrid[7][2].piece == None and copygrid[7][3].piece == None:
+                    saveKing = copy.deepcopy(copygrid[7][4])
+                    copygrid[7][6] = saveKing
+                    copygrid[7][4] = Square(7, 4)
+                    saveRook = copy.deepcopy(copygrid[7][0])
+                    copygrid[7][5] = saveRook
+                    copygrid[7][7] = Square(7,0)
+                    self.loadProtections2(copygrid)
+                    if copygrid[7][2].blackprotected == False:
+                        directions.append("left")
+
+            return directions
+
         if (team == "black"):
             if (self.blackKingLoc == [0,4] and self.grid[0,7].piece == "rook") or (self.whiteKingLoc == [0,4] and self.grid[0,0].piece == "rook"):
                 return True
             else:
                 return False
+            
+
+            
+
+    def Castle(self, team, direction):
+        grid = self.grid
+        if (team == "white"):
+            if direction == "right":
+                saveKing = copy.deepcopy(grid[7][4])
+                grid[7][6] = saveKing
+                grid[7][4] = Square(7, 4)
+                saveRook = copy.deepcopy(grid[7][7])
+                grid[7][5] = saveRook
+                grid[7][7] = Square(7,7)
+                self.whiteKingLoc = [7, 6]
+                    
+                
+            if direction == "left":
+                saveKing = copy.deepcopy(grid[7][4])
+                grid[7][2] = saveKing
+                grid[7][4] = Square(7, 4)
+                saveRook = copy.deepcopy(grid[7][0])
+                grid[7][5] = saveRook
+                grid[7][7] = Square(7,0)
+                self.whiteKingLoc = [7, 2]
+
+        if (team == "black"):
+            pass
 
             
                 
