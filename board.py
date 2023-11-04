@@ -237,10 +237,34 @@ class Board:
             return directions
 
         if (team == "black"):
-            if (self.blackKingLoc == [0,4] and self.grid[0,7].piece == "rook") or (self.whiteKingLoc == [0,4] and self.grid[0,0].piece == "rook"):
-                return True
-            else:
-                return False
+            directions = []
+            if self.blackKingLoc == [0,4] and self.grid[0][7].piece == "rook" and self.blackInCheck == False:
+                copygrid = copy.deepcopy(self.grid)
+                if copygrid[0][5].piece == None and copygrid[7][6].piece == None:
+                    saveKing = copy.deepcopy(copygrid[0][4])
+                    copygrid[0][6] = saveKing
+                    copygrid[0][4] = Square(0, 4)
+                    saveRook = copy.deepcopy(copygrid[0][7])
+                    copygrid[0][5] = saveRook
+                    copygrid[0][7] = Square(0,7)
+                    self.loadProtections2(copygrid)
+                    if copygrid[0][6].whiteprotected == False:
+                        directions.append("right")
+                
+            if self.blackKingLoc == [0,4] and self.grid[0][0].piece == "rook" and self.blackInCheck == False:
+                copygrid = copy.deepcopy(self.grid)
+                if copygrid[0][1].piece == None and copygrid[0][2].piece == None and copygrid[0][3].piece == None:
+                    saveKing = copy.deepcopy(copygrid[0][4])
+                    copygrid[0][6] = saveKing
+                    copygrid[0][6] = Square(0, 5)
+                    saveRook = copy.deepcopy(copygrid[0][0])
+                    copygrid[0][4] = saveRook
+                    copygrid[0][0] = Square(0,0)
+                    self.loadProtections2(copygrid)
+                    if copygrid[0][2].whiteprotected == False:
+                        directions.append("left")
+            
+            return directions
             
 
             
@@ -257,7 +281,6 @@ class Board:
                 grid[7][7] = Square(7,7)
                 self.whiteKingLoc = [7, 6]
                     
-                
             if direction == "left":
                 saveKing = copy.deepcopy(grid[7][4])
                 grid[7][2] = saveKing
@@ -268,7 +291,23 @@ class Board:
                 self.whiteKingLoc = [7, 2]
 
         if (team == "black"):
-            pass
+            if direction == "right":
+                saveKing = copy.deepcopy(grid[0][4])
+                grid[0][6] = saveKing
+                grid[0][4] = Square(0, 4)
+                saveRook = copy.deepcopy(grid[0][7])
+                grid[0][5] = saveRook
+                grid[0][7] = Square(0,7)
+                self.whiteKingLoc = [7, 6]
+                    
+            if direction == "left":
+                saveKing = copy.deepcopy(grid[0][4])
+                grid[0][2] = saveKing
+                grid[0][4] = Square(0, 4)
+                saveRook = copy.deepcopy(grid[0][0])
+                grid[0][5] = saveRook
+                grid[0][7] = Square(0,0)
+                self.whiteKingLoc = [0, 2]
 
             
                 
