@@ -228,7 +228,7 @@ class Board:
                     copygrid[7][6] = saveKing
                     copygrid[7][4] = Square(7, 4)
                     saveRook = copy.deepcopy(copygrid[7][0])
-                    copygrid[7][5] = saveRook
+                    copygrid[7][5] = saveRook 
                     copygrid[7][7] = Square(7,0)
                     self.loadProtections2(copygrid)
                     if copygrid[7][2].blackprotected == False:
