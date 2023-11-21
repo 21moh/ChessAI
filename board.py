@@ -40,24 +40,38 @@ class Board:
         for i in range(8):
             grid[1][i].add_piece("black", "pond", "images/blackPond.png", 1, i)
             grid[6][i].add_piece("white", "pond", "images/whitePond.png", 6, i)
+            grid[1][i].points = 1
+            grid[6][i].points = 1
 
 
         grid[0][0].add_piece("black", "rook", "images/blackRook.png", 0, 0)
         grid[0][7].add_piece("black", "rook", "images/blackRook.png", 0, 7)
         grid[7][0].add_piece("white", "rook", "images/whiteRook.png", 7, 0)
         grid[7][7].add_piece("white", "rook", "images/whiteRook.png", 7, 7)
+        grid[0][0].points = 5
+        grid[0][7].points = 5
+        grid[7][0].points = 5
+        grid[7][7].points = 5
         
 
         grid[0][1].add_piece("black", "knight", "images/blackKnight.png", 0, 1)
         grid[0][6].add_piece("black", "knight", "images/blackKnight.png", 0, 6)
         grid[7][1].add_piece("white", "knight", "images/whiteKnight.png", 7, 1)
         grid[7][6].add_piece("white", "knight", "images/whiteKnight.png", 7, 6)
+        grid[0][1].points = 3
+        grid[0][6].points = 3
+        grid[7][1].points = 3
+        grid[7][6].points = 3
         
 
         grid[0][2].add_piece("black", "bishop", "images/blackBishop.png", 0, 2)
         grid[0][5].add_piece("black", "bishop", "images/blackBishop.png", 0, 5)
         grid[7][2].add_piece("white", "bishop", "images/whiteBishop.png", 7, 2)
         grid[7][5].add_piece("white", "bishop", "images/whiteBishop.png", 7, 5)
+        grid[0][2].points = 3
+        grid[0][5].points = 3
+        grid[7][2].points = 3
+        grid[7][5].points = 3
         
         
 
@@ -65,9 +79,24 @@ class Board:
         grid[0][4].add_piece("black", "king", "images/blackKing.png", 0, 4)
         grid[7][3].add_piece("white", "queen", "images/whiteQueen.png", 7, 3)
         grid[7][4].add_piece("white", "king", "images/whiteKing.png", 7, 4)
-        
-        
+        grid[0][3].points = 10
+        grid[0][4].points = 1000
+        grid[7][3].points = 10
+        grid[7][4].points = 1000
 
+        """
+        for row in range(ROWS):
+            for col in range(COLS):
+                grid[row][col].setPoint()
+        """
+        
+        
+    
+    def loadPoints(self):
+        grid = self.grid
+        for row in range(ROWS):
+            for col in range(COLS):
+                grid[row][col].setPoint()
     
     def loadPlacements(self, moves, turn, surface):
 

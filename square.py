@@ -15,6 +15,7 @@ class Square:
         self.points = 0
 
 
+    def setPoint(self):
         if (self.piece == "pond"):
             self.points = 1
         if (self.piece == "knight"):
@@ -24,11 +25,9 @@ class Square:
         if (self.points == "rook"):
             self.points = 5
         if (self.points == "queen"):
-            self.points = 10
+            self.points = 9
         if (self.points == "king"):
-            self.points = "king"
-        
-
+            self.points = 1000
     
     def add_piece(self, team, piece, img, row, col):
         self.piece = piece

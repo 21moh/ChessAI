@@ -7,14 +7,8 @@ from const import *
 from game import Game
 from square import Square
 
-from bardapi import Bard
-import os
-import time
-
-import openai
-
-openai.api_key = "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"
-
+import threading
+import queue
 
 class Main:
     
@@ -36,6 +30,70 @@ class Main:
 
         turn = "white"
 
+        
+        #################################################################################################################################
+        # Move Generator Section for Black AI
+        # The function is placed outside the while loop because each while loop generates the graphics and the current position of all the pieces on the board. 
+        # Thus, any delay to the main while loop's next iteration would cause a dropped white pieces to freeze due to the sequential algorithm for black finding its move.
+        # Thus, threading is used so the the while loop can continue iterating without delay while the 'findMoveBlack' algorithm finds the best move for black.
+        # When the findMoveBlack algorithm does finds the best move, the main while loop updates the board with the move found.
+    
+        
+        q = queue.Queue()
+        thread1 = None
+        # for AI
+        def findMoveBlack(game, q):
+            grid = game.board.grid
+            allmoves = dict()
+            
+            #recursive function which stores results in a dictionary
+            def bestMove(grid, board, depth, allmoves, pts, moves):  
+                if depth >= 2 or board.whiteInCheckmate == True or len(moves) == 2:
+                    #print("BASE CASE REACHED, DEPTH =", depth, "| White in checkmate:", board.whiteInCheckmate, "| Points from moves:", pts)
+                    #print("MOVES:", moves)
+                    allmoves[pts] = moves
+                    return
+                else:
+                    Board = copy.deepcopy(board)
+                    print("depth checker:", depth)
+                    print("num points:", pts)
+                    for row in range(ROWS):
+                        for col in range(COLS):
+                            if grid[row][col].team == "black":
+                                pieceMoves = Board.get_moves(grid[row][col].piece, row, col, "black", grid)
+                                for move in pieceMoves:
+                                    Moves = copy.deepcopy(moves)
+                                    Moves.append([row, col, move[0], move[1]])
+                                    tempPts = copy.deepcopy(pts)
+                                    Board2 = copy.deepcopy(Board)
+                                    copyDepth = copy.deepcopy(depth)
+                                    if Board2.grid[move[0]][move[1]].team == "white":
+                                        #Board2.loadPoints()
+                                        tempPts += Board.grid[move[0]][move[1]].points
+                                        print("captured white hypothetical piece:", Board2.grid[move[0]][move[1]].piece, "| points gained from piece:", Board2.grid[move[0]][move[1]].points)
+                                        print("moveset:", Moves)
+                                        print("points gained", tempPts, "| in depth:", depth)
+
+                                    print("Recursion moves:", Moves)
+
+                                    save = copy.deepcopy(Board2.grid[row][col])
+                                    Board2.grid[move[0]][move[1]] = save
+                                    Board2.grid[row][col] = Square(row, col)
+                                    Board2.checkChecker("white", Board.grid)
+                                    if Board2.whiteInCheck:
+                                        Board2.InCheckMoves("white")
+                                    #if depth <= 5:
+                                    copyDepth += 1
+                                    bestMove(Board2.grid, Board2, copyDepth, allmoves, tempPts, Moves)
+
+            bestMove(game.board.grid, game.board, 0, allmoves, 0, [])
+            q.put(allmoves)
+
+        #################################################################################################################################
+
+
+
+        # Main game while loop
         while running:
             game.show_board(screen)
             game.show_pieces(screen)
@@ -58,10 +116,7 @@ class Main:
                         sys.exit()
 
             
-            #  if turn == white     ->> HUMAN SECTION  
-
-        #############################################     WHITE          #################################################################################################################
-            #game.board.printProtections()
+            #########################################     WHITE          #################################################################################################################
             
             if turn == "white":
 
@@ -152,25 +207,26 @@ class Main:
                                                 game.board.checkChecker("white", game.board.grid)
                                                         
                                     elif (self.game.board.whiteInCheck == True):
-                                        for i in range(len(game.board.white_movable)):
-                                            if game.board.white_move[i][0] == clicked_row and game.board.white_move[i][1] == clicked_col:
-                                                x = game.board.white_move[i][0]
-                                                y = game.board.white_move[i][1]
-                                                if clicked_row == x and clicked_col == y:
-                                                    game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
-                                                    game.board.grid[clicked_row][clicked_col].row = clicked_row
-                                                    game.board.grid[clicked_row][clicked_col].col = clicked_col
-                                                    game.board.grid[clicked_row][clicked_col].moves = []
-                                                    game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-                                                    game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
-                                                    game.board.white_movable = []
-                                                    game.board.white_move = []
-                                                    turn = "black"
-                                                    game.board.checkChecker("white", game.board.grid)
-                                                    if dragger.piece.piece == "king":
-                                                        game.board.whiteKingLoc = [clicked_row, clicked_col]
-                                            
-                                                    break
+                                        # hypothetical checker
+
+                                        copyBoard = copy.deepcopy(game.board)
+                                        savepiece = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                        copyBoard.grid[clicked_row][clicked_col] = savepiece
+                                        copyBoard.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                        copyBoard.checkChecker("black", copyBoard.grid)
+                                        if copyBoard.whiteInCheck == False:
+                                            game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                            game.board.grid[clicked_row][clicked_col].row = clicked_row
+                                            game.board.grid[clicked_row][clicked_col].col = clicked_col
+                                            game.board.grid[clicked_row][clicked_col].moves = []
+                                            game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                            game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+                                            game.board.white_movable = []
+                                            game.board.white_move = []
+                                            turn = "black"
+                                            game.board.checkChecker("white", game.board.grid)
+                                            if dragger.piece.piece == "king":
+                                                game.board.whiteKingLoc = [clicked_row, clicked_col]
 
                             dragger.dragging = False
                             dragger.piece = None
@@ -186,193 +242,61 @@ class Main:
         ################################################    BLACK        ##############################################################################################################
 
 
-
-            # if turn equals black --> AI SECTION
             elif turn == "black":
 
-                def chatgpt(prompt, model="text-davinci-003"):
-                    response = openai.Completion.create(
-                        engine=model,
-                        prompt=prompt,
-                        max_tokens=100,
-                        n=1,
-                        stop=None,
-                        temperature=0.5,
-                    )
-
-                    message = response.choices[0].text.strip()
-                    return message
-
-                time.sleep(2)
-                input_text = """Hey Chatgpt, Can you play as black for me in this chess game? Here is the board currently:\n"""
-
-                # use parallel processing when calling bard
-                grid = game.board.grid
-                input_text += "  01234567\n"
-                for row in range(ROWS):
-                    input_text += str(row)
-                    input_text += " "
-                    for col in range(COLS):
-                        square = grid[row][col]
-                        if square.piece == "rook" and square.team == "black":
-                            input_text += "r"
-                        if square.piece == "bishop" and square.team == "black":
-                            input_text += "b"
-                        if square.piece == "knight" and square.team == "black":
-                            input_text += "n"
-                        if square.piece == "queen" and square.team == "black":
-                            input_text += "q"
-                        if square.piece == "king" and square.team == "black":
-                            input_text += "k"
-                        if square.piece == "pond" and square.team == "black":
-                            input_text += "p"
-                        
-                        if square.piece == "rook" and square.team == "white":
-                            input_text += "R"
-                        if square.piece == "bishop" and square.team == "white":
-                            input_text += "B"
-                        if square.piece == "knight" and square.team == "white":
-                            input_text += "N"
-                        if square.piece == "queen" and square.team == "white":
-                            input_text += "Q"
-                        if square.piece == "king" and square.team == "white":
-                            input_text += "K"
-                        if square.piece == "pond" and square.team == "white":
-                            input_text += "P"
-                        
-                        elif square.piece == None:
-                            input_text += "."
-                    input_text += "\n"
-
-                input_text += "Also, here are all the possible moves you can make assuming we are treating the board like a double list in python"
                 if game.board.blackInCheck == False:
-                    blackmoves = dict()
-                    numMove = 1
-                    for row in range(ROWS):
-                        for col in range(COLS):
-                            if grid[row][col].team == "black":
-                                moves = game.board.get_moves(grid[row][col].piece, row, col, "black", grid)
-                                for move in moves:
-                                    piece = grid[row][col].piece
-                                    input_text += "move "
-                                    input_text += str(numMove)
-                                    input_text += ": black"
-                                    input_text += piece
-                                    input_text += " at ["
-                                    input_text += str(row)
-                                    input_text += ", "
-                                    input_text += str(col)
-                                    input_text += "]"
-                                    input_text += " to ["
-                                    input_text += str(move[0])
-                                    input_text += ", "
-                                    input_text += str(move[1])
-                                    input_text += "]\n"
-                                    blackmoves[numMove] = [row, col, move[0], move[1]]
-                                numMove += 1
+                    if thread1 == None:
+                        thread1 = threading.Thread(target=findMoveBlack, args=(game, q))
+                        thread1.start()
 
-                    directions = game.board.CanCastle("black")
-                    rightCastle = False
-                    leftCastle = False
-                    if directions.count("right") >= 1:
-                        rightCastle = True
-                        input_text += "move "
-                        input_text += str(numMove)
-                        input_text += ": castle left direction"
-                        input_text += "\n"
-                        numMove += 1
+                    if thread1.is_alive() == False:
+                        moves = q.get()
+                        max_key = 0
+                        for key in moves:
+                            if key > max_key:
+                                max_key = key
+                        
+                        print("max pts:", max_key)
+                        print("all moves", moves)
+                        path = moves[max_key][0]
+                        print("chosen path:", path)
 
-                    if directions.count("left") >= 1:
-                        leftCastle = True
-                        input_text += "move "
-                        input_text += str(numMove)
-                        input_text += ": castle right direction"
-                        input_text += "\n"
-                        numMove += 1
+                    
+                        temp = copy.deepcopy(game.board.grid[path[0]][path[1]])
+                        game.board.grid[path[0]][path[1]] = Square(path[0], path[1])
+                        img = pygame.image.load(temp.image)
+                        orig_row = path[1] * CELL_SIZE
+                        orig_col = path[0] * CELL_SIZE
 
+                        final_row = path[3] * CELL_SIZE
+                        final_col = path[2] * CELL_SIZE
 
-                    input_text += "select your best move by simply returning the number value associated with the move you want to make. If your desired move is move 2, then simply reply with ONLY \"2\". It is important that you reply with ONLY the number value move you want to make, DO NOT say anything else, AND DO NOT explain your move. DO NOT CONVERSE WITH ME. Only text me the number value move you want to make"
-                    input_text += "if there are no possible moves in the move list, reply with ONLY the value \"0\"."
+                        rowInc = copy.deepcopy(orig_row)
+                        colInc = copy.deepcopy(orig_col)
+                        while (rowInc != final_row and colInc != final_col):
+                            print("iterating")
+                            x = final_row - orig_row / 10000
+                            y = final_col - orig_col / 10000
+                            rowInc += x
+                            colInc += y
+                            screen.blit(img, (x, y))
 
-                    response = chatgpt(input_text)
-                    print("\n\n")
-                    print("-----------")
-                    print("line 298", response)
-                    chosenNum = 1
-                    buildValue = ""                    
-                    for char in response:
-                        if char.isdigit():
-                            buildValue += char
-                    buildValue = int(buildValue)
-                    print("chosen num:", chosenNum)
-                    print("num moves:", numMove)
-                    moves = blackmoves[buildValue]      
-                    initial = []
-                    initial.append(moves[0])
-                    initial.append(moves[1])
-                    final = []
-                    final.append(moves[2])
-                    final.append(moves[3]) 
-                    save = copy.deepcopy(grid[initial[0]][initial[1]])
-                    grid[final[0]][final[1]] = save
-                    grid[initial[0]][initial[1]]= Square(initial[0], initial[1])    
+                        game.board.grid[path[2]][path[3]] = temp
+                        thread1 = None
+
+                        game.board.loadProtections()
+                        turn = "white"
+                        game.board.checkChecker("black", game.board.grid)
+                        if (game.board.whiteInCheck == True):
+                            game.board.InCheckMoves("white")
+                        
+
+                    
 
                 elif game.board.blackInCheck == True:
-                    blackmoves = dict()
-                    numMove = 1
-                    for i in range(len(game.board.black_movable)):
-                        blackpiece = game.board.black_movable[i]
-                        blackmoves[numMove] = [blackpiece.row, blackpiece.col, game.board.black_move[i][0], game.board.black_move[i][1]]
-                        piece = blackpiece.piece
-                        
-                        input_text += "move "
-                        input_text += str(numMove)
-                        input_text += ": black"
-                        input_text += piece
-                        input_text += " at ["
-                        input_text += str(blackpiece.row)
-                        input_text += ", "
-                        input_text += str(blackpiece.col)
-                        input_text += "]"
-                        input_text += " to ["
-                        input_text += str(game.board.black_move[i][0])
-                        input_text += ", "
-                        input_text += str(game.board.black_move[i][1])
-                        input_text += "]\n"
-                        numMove += 1
+                    pass
 
-
-                    input_text += "select your move by simply returning the number value associated with the move you want to make. If your desired move is move 2, then simply reply with ONLY \"2\". It is important that you reply with ONLY the number value move you want to make, DO NOT say anything else, AND DO NOT explain your move"
-
-
-                    input_text += "if there are no possible moves in the move list, reply with ONLY the value \"0\"."
-
-
-                    response = chatgpt(input_text)
-                    print("line 345", response)
-                    if response == "0":
-                        game.board.blackInCheckmate = True
-                    else:
-                        chosenNum = None                    
-                        for char in response:
-                            if char.isdigit():
-                                chosenNum = int(char)
-                        moves = blackmoves[chosenNum]      
-                        initial = []
-                        initial.append(moves[0])
-                        initial.append(moves[1])
-                        final = []
-                        final.append(moves[2])
-                        final.append(moves[3]) 
-                        save = copy.deepcopy(grid[initial[0]][initial[1]])
-                        grid[final[0]][final[1]] = save
-                        grid[initial[0]][initial[1]]= Square(initial[0], initial[1])    
-
-                game.board.loadProtections()
-                turn = "white"
-                game.board.checkChecker("black", game.board.grid)
-                if (game.board.whiteInCheck == True):
-                    game.board.InCheckMoves("white")
+                
 
 
                 
