@@ -121,13 +121,10 @@ class Main:
             if turn == "white":
 
                 if dragger.dragging == True:
-                    
-
                     clicked_row = dragger.mouseY // CELL_SIZE
                     clicked_col = dragger.mouseX // CELL_SIZE
                     # creates all possible move locations with piece
                     game.board.grid[dragger.initial_row][dragger.initial_col].moves = game.board.get_moves(dragger.piece.piece, dragger.initial_row, dragger.initial_col, dragger.piece.team, game.board.grid)
-                    
                     # load all possible locations the piece can be placed
                     game.board.loadPlacements(game.board.grid[dragger.initial_row][dragger.initial_col].moves, turn, screen)
                     dragger.update_mouse(event.pos)
@@ -264,22 +261,31 @@ class Main:
                     
                         temp = copy.deepcopy(game.board.grid[path[0]][path[1]])
                         game.board.grid[path[0]][path[1]] = Square(path[0], path[1])
-                        img = pygame.image.load(temp.image)
-                        orig_row = path[1] * CELL_SIZE
-                        orig_col = path[0] * CELL_SIZE
+                        
+                        
+                        # Copied from dragger class update_blit function
 
-                        final_row = path[3] * CELL_SIZE
-                        final_col = path[2] * CELL_SIZE
+                        piece_image = pygame.image.load(temp.image)
+                        
+                        original_width, original_height = img.get_size()
 
-                        rowInc = copy.deepcopy(orig_row)
-                        colInc = copy.deepcopy(orig_col)
-                        while (rowInc != final_row and colInc != final_col):
-                            print("iterating")
-                            x = final_row - orig_row / 10000
-                            y = final_col - orig_col / 10000
-                            rowInc += x
-                            colInc += y
-                            screen.blit(img, (x, y))
+                        spacing_factor = 0.9
+
+                        # Calculates scaling factors
+                        width_scale = CELL_SIZE * spacing_factor / original_width
+                        height_scale = CELL_SIZE * spacing_factor / original_height
+                        # Use the smaller scaling factor to maintain aspect ratio
+                        scale_factor = min(width_scale, height_scale)
+                        # Scales the image
+                        piece_image = pygame.transform.scale(piece_image, (int(original_width * scale_factor), int(original_height * scale_factor)))
+
+                        dx = (path[2] - path[0]) * 100
+                        dy = (path[3] - path[1]) * 100
+                        speed = 2
+                        
+                        img_center = (dx, dy)
+                        screen.blit(img, img.get_rect(center=img_center))
+
 
                         game.board.grid[path[2]][path[3]] = temp
                         thread1 = None
@@ -289,9 +295,8 @@ class Main:
                         game.board.checkChecker("black", game.board.grid)
                         if (game.board.whiteInCheck == True):
                             game.board.InCheckMoves("white")
-                        
+                
 
-                    
 
                 elif game.board.blackInCheck == True:
                     pass
