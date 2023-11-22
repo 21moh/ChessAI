@@ -1,6 +1,14 @@
 bugs:
 
+(OLD CHECK IF STILL PROBLEM)
 with promoted queen at black knight origin square, move checker thinks the piece is a knight not a queen
 
 pond to queen promotion, when the pond hits the original black knight or black bishop square, the queen's attacks become that knight or bishop's attacks. But when it goes to the original rook spot, 
 the queen has the original moves so what is to expect???
+
+
+NEW
+
+White king moves not providing all available moves
+For black move finder, put all black pieces as Square Objects in a list and iterate through them all instead of iterating through the entire board  (optimization)
+

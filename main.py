@@ -9,6 +9,7 @@ from square import Square
 
 import threading
 import queue
+import time
 
 class Main:
     
@@ -92,6 +93,23 @@ class Main:
         #################################################################################################################################
 
 
+        animating = False    # boolean for Black piece movement
+
+        initial_row = None      # row and col for double list
+        initial_col = None
+        final_row = None
+        final_col = None
+
+
+        initial_x = None        # x and y like on a regular graph
+        initial_y = None
+        final_x = None
+        final_y = None
+
+
+        xIncrementer = 0        # incrementer values to move object across the board
+        yIncrementer = 0
+        piece = None            # Variable storing Square Object to be animated
 
         # Main game while loop
         while running:
@@ -241,12 +259,14 @@ class Main:
 
             elif turn == "black":
 
+                
+
                 if game.board.blackInCheck == False:
-                    if thread1 == None:
+                    if thread1 == None and animating == False:
                         thread1 = threading.Thread(target=findMoveBlack, args=(game, q))
                         thread1.start()
 
-                    if thread1.is_alive() == False:
+                    if thread1.is_alive() == False and animating == False:
                         moves = q.get()
                         max_key = 0
                         for key in moves:
@@ -258,43 +278,80 @@ class Main:
                         path = moves[max_key][0]
                         print("chosen path:", path)
 
-                    
-                        temp = copy.deepcopy(game.board.grid[path[0]][path[1]])
-                        game.board.grid[path[0]][path[1]] = Square(path[0], path[1])
+                        initial_row = path[0]
+                        initial_col = path[1]
+                        final_row = path[2]
+                        final_col = path[3]
+
+                        initial_x = copy.copy(initial_col) * 100
+                        initial_y = copy.copy(initial_row) * 100
+                        final_x = copy.copy(final_col) * 100
+                        final_y = copy.copy(final_row) * 100
+
+                        xIncrementer = copy.copy(initial_x)
+                        yIncrementer = copy.copy(initial_y)
+
+                        piece = copy.deepcopy(game.board.grid[initial_row][initial_col])
+                        animating = True
+
+
+                    if animating == True:
+                        game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
+                        print("ANIMATING BOOLEAN ACCESSED")
+                        dx = (final_x - initial_x) / 10
+                        dy = (final_y - initial_y) / 10
                         
+                        """
+                        xchange = final_x - initial_x
+                        ychange = final_y - initial_y
+                        if xchange > 0:
+                            dx = 10
+                        elif xchange < 0:
+                            dx = -10
+                        elif xchange == 0:
+                            dx = 0
+                        if ychange > 0:
+                            dy = 10
+                        elif ychange < 0:
+                            dy = -10
+                        elif ychange == 0:
+                            dy = 0
+                        """
+
+                        if xIncrementer != final_x or yIncrementer != final_y:
+                            img = pygame.image.load(piece.image)
+
+                            original_width, original_height = img.get_size()
+
+                            spacing_factor = 0.9
+
+                            # Calculates scaling factors
+                            width_scale = CELL_SIZE * spacing_factor / original_width
+                            height_scale = CELL_SIZE * spacing_factor / original_height
+                            # Use the smaller scaling factor to maintain aspect ratio
+                            scale_factor = min(width_scale, height_scale)
+                            # Scales the image
+                            img = pygame.transform.scale(img, (int(original_width * scale_factor), int(original_height * scale_factor)))
+                            img_center = (xIncrementer+50, yIncrementer+50)
+                            screen.blit(img, img.get_rect(center=img_center))
+
+                            xIncrementer += dx
+                            yIncrementer += dy
+
+                        elif xIncrementer == final_x and yIncrementer == final_y:                        
+                            game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
+
+                            game.board.grid[final_row][final_col] = piece
+                            print("finished animation")
+                            piece = None
+                            thread1 = None
+                            animating = False
+                            game.board.loadProtections()
+                            turn = "white"
+                            game.board.checkChecker("black", game.board.grid)
+                            if (game.board.whiteInCheck == True):
+                                game.board.InCheckMoves("white")
                         
-                        # Copied from dragger class update_blit function
-
-                        piece_image = pygame.image.load(temp.image)
-                        
-                        original_width, original_height = img.get_size()
-
-                        spacing_factor = 0.9
-
-                        # Calculates scaling factors
-                        width_scale = CELL_SIZE * spacing_factor / original_width
-                        height_scale = CELL_SIZE * spacing_factor / original_height
-                        # Use the smaller scaling factor to maintain aspect ratio
-                        scale_factor = min(width_scale, height_scale)
-                        # Scales the image
-                        piece_image = pygame.transform.scale(piece_image, (int(original_width * scale_factor), int(original_height * scale_factor)))
-
-                        dx = (path[2] - path[0]) * 100
-                        dy = (path[3] - path[1]) * 100
-                        speed = 2
-                        
-                        img_center = (dx, dy)
-                        screen.blit(img, img.get_rect(center=img_center))
-
-
-                        game.board.grid[path[2]][path[3]] = temp
-                        thread1 = None
-
-                        game.board.loadProtections()
-                        turn = "white"
-                        game.board.checkChecker("black", game.board.grid)
-                        if (game.board.whiteInCheck == True):
-                            game.board.InCheckMoves("white")
                 
 
 
