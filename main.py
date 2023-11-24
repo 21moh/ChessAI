@@ -9,7 +9,6 @@ from square import Square
 
 import threading
 import queue
-import time
 
 class Main:
     
@@ -49,46 +48,102 @@ class Main:
             
             #recursive function which stores results in a dictionary
             def bestMove(grid, board, depth, allmoves, pts, moves):  
-                if depth >= 2 or board.whiteInCheckmate == True or len(moves) == 2:
+                if depth >= 2 or board.whiteInCheckmate == True:
                     #print("BASE CASE REACHED, DEPTH =", depth, "| White in checkmate:", board.whiteInCheckmate, "| Points from moves:", pts)
                     #print("MOVES:", moves)
-                    allmoves[pts] = moves
+                    if pts not in allmoves:
+                        allmoves[pts] = []
+                    allmoves[pts].append(moves)
                     return
                 else:
                     Board = copy.deepcopy(board)
                     print("depth checker:", depth)
                     print("num points:", pts)
-                    for row in range(ROWS):
-                        for col in range(COLS):
-                            if grid[row][col].team == "black":
-                                pieceMoves = Board.get_moves(grid[row][col].piece, row, col, "black", grid)
-                                for move in pieceMoves:
-                                    Moves = copy.deepcopy(moves)
-                                    Moves.append([row, col, move[0], move[1]])
-                                    tempPts = copy.deepcopy(pts)
-                                    Board2 = copy.deepcopy(Board)
-                                    copyDepth = copy.deepcopy(depth)
-                                    if Board2.grid[move[0]][move[1]].team == "white":
-                                        #Board2.loadPoints()
-                                        tempPts += Board.grid[move[0]][move[1]].points
-                                        print("captured white hypothetical piece:", Board2.grid[move[0]][move[1]].piece, "| points gained from piece:", Board2.grid[move[0]][move[1]].points)
-                                        print("moveset:", Moves)
-                                        print("points gained", tempPts, "| in depth:", depth)
+                    Board.postAttackers()
+                    Board.loadPoints()
+                    for loc in Board.blackPieces:
+                        row = loc[0]
+                        col = loc[1]
+                        if grid[row][col].team == "black":
+                            pieceMoves = Board.get_moves(grid[row][col].piece, row, col, "black", grid)
+                            for move in pieceMoves:
+                                Board2 = copy.deepcopy(Board)
+                                tempPts = copy.copy(pts)
+                                # check if piece is being attacked aka add defensive conditionals
 
-                                    print("Recursion moves:", Moves)
+                                if grid[move[0]][move[1]].whiteprotected == True:
+                                    tempPts -= grid[row][col].points
+                                if grid[move[0]][move[1]].team == "white":
+                                    tempPts += grid[move[0]][move[1]].points
+                                    if (depth == 0 and grid[move[0]][move[1]].piece == "queen"):
+                                        tempPts += 20
+                                if grid[move[0]][move[1]].piece != None and grid[move[0]][move[1]].whiteprotected == False:
+                                    tempPts += grid[move[0]][move[1]].points                # Change, no change to tempPts
+                                if grid[row][col].piece == "pond" and grid[move[0]][move[1]].team == "black" and len(grid[move[0]][move[1]].whiteAttackers) >= 1:
+                                    arow = grid[move[0]][move[1]].whiteAttackers[0][0]
+                                    acol= grid[move[0]][move[1]].whiteAttackers[0][1]
+                                    tempPts += grid[arow][acol].points
+                                Moves = copy.deepcopy(moves)
+                                Moves.append([row, col, move[0], move[1]])
+                                copyDepth = copy.deepcopy(depth)
+                                if Board2.grid[move[0]][move[1]].team == "white":
+                                    print("captured white hypothetical piece:", Board2.grid[move[0]][move[1]].piece, "| points gained from piece:", Board2.grid[move[0]][move[1]].points)
+                                    print("moveset:", Moves)
+                                    print("points gained", pts, "| in depth:", depth)
 
-                                    save = copy.deepcopy(Board2.grid[row][col])
-                                    Board2.grid[move[0]][move[1]] = save
-                                    Board2.grid[row][col] = Square(row, col)
-                                    Board2.checkChecker("white", Board.grid)
-                                    if Board2.whiteInCheck:
-                                        Board2.InCheckMoves("white")
-                                    #if depth <= 5:
-                                    copyDepth += 1
+                                print("Recursion moves:", Moves)
+
+                                save = copy.deepcopy(Board2.grid[row][col])
+                                #print("all black piece locations:", Board2.blackPieces)
+                                Board2.blackPieces.remove([row, col])
+                                Board2.blackPieces.append([move[0], move[1]])
+                                if Board2.grid[move[0]][move[1]].whiteprotected == True:
+                                    Board2.blackPieces.remove([move[0], move[1]])
+                                Board2.grid[move[0]][move[1]] = save
+                                Board2.grid[move[0]][move[1]].row = move[0]
+                                Board2.grid[move[0]][move[1]].col = move[1]
+                                Board2.grid[row][col] = Square(row, col)
+                                Board2.checkChecker("white", Board.grid)
+                                if Board2.whiteInCheck:
+                                    Board2.InCheckMoves("white")
+                                #if depth <= 5:
+                                copyDepth += 1
+                                if tempPts >= 0:
                                     bestMove(Board2.grid, Board2, copyDepth, allmoves, tempPts, Moves)
 
             bestMove(game.board.grid, game.board, 0, allmoves, 0, [])
+            game.board.printProtections()
             q.put(allmoves)
+
+
+        def findCheckMoveBlack(game, moves, q):
+            bestMove = None
+            bestPoints = 0
+            grid = game.board.grid
+            for move in moves:
+                Board = copy.deepcopy(game.board)
+                capturePts = 0
+                grid = Board.grid
+                irow = move[0]
+                icol = move[1]
+                frow = move[2]
+                fcol = move[3]
+                initial = copy.deepcopy(grid[irow][icol])
+                final = copy.deepcopy(grid[frow][fcol])
+
+                if (final.whiteprotected == True):
+                    capturePts += final.points
+                    capturePts -= initial.points
+                elif (final.whiteprotected == False):
+                    capturePts += final.points
+                if capturePts > bestPoints:
+                    bestMove = move
+            q.put(bestMove)
+                
+
+                
+                
+
 
         #################################################################################################################################
 
@@ -116,6 +171,7 @@ class Main:
             game.show_board(screen)
             game.show_pieces(screen)
             game.board.loadProtections()
+            
 
             if (self.game.board.blackInCheckmate == True):
                 img = pygame.image.load("images/white wins.png")
@@ -191,31 +247,41 @@ class Main:
                                 if (result >= 1):                           # player drops piece into valid square
 
                                     if (self.game.board.whiteInCheck == False):
-
+                                        capturedSquare = copy.deepcopy(game.board.grid[clicked_row][clicked_col])
                                         copygrid = copy.deepcopy(game.board.grid)
                                         saveinitial = copy.deepcopy(game.board.grid[dragger.initial_row][dragger.initial_col])
                                         copygrid[clicked_row][clicked_col] = saveinitial
                                         copygrid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                        if capturedSquare.team == "black":
+                                            game.board.blackPieces.remove([clicked_row, clicked_col])
                                         game.board.loadProtections2(copygrid)
                                         inCheck = game.board.checkChecker("black", copygrid)
 
                                         if inCheck == False:    # boolean prevents moving a friendly piece towards opening a check towards white king
 
                                             if dragger.piece.piece == "pond" and clicked_row == 0:     # transform pond into Queen
+                                                capturedSquare = copy.deepcopy(game.board.grid[clicked_row][clicked_col])
                                                 game.board.grid[clicked_row][clicked_col] = Square(clicked_row, clicked_col)
                                                 game.board.grid[clicked_row][clicked_col].add_piece("white", "queen", "images/whiteQueen.png", clicked_row, clicked_col)
                                                 game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+                                                if capturedSquare.team == "black":
+                                                    game.board.blackPieces.remove([clicked_row, clicked_col])
                                                 game.board.checkChecker("white", game.board.grid)
                                                 turn = "black"
+
+                                               
 
                                             else:
                                                 # shift all piece information into new Square and Piece for capture
                                                 game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                                capturedSquare = copy.deepcopy(game.board.grid[clicked_row][clicked_col])
                                                 game.board.grid[clicked_row][clicked_col].row = clicked_row
                                                 game.board.grid[clicked_row][clicked_col].col = clicked_col
                                                 game.board.grid[clicked_row][clicked_col].moves = []
                                                 game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
                                                 game.board.grid[dragger.initial_row][dragger.initial_col].moves = []
+                                                if capturedSquare.team == "black":
+                                                    game.board.blackPieces.remove([clicked_row, clicked_col])
                                                 turn = "black"
                                                 if dragger.piece == 'king':
                                                     game.board.whiteKingLoc = [clicked_row, clicked_col]
@@ -226,8 +292,13 @@ class Main:
 
                                         copyBoard = copy.deepcopy(game.board)
                                         savepiece = game.board.grid[dragger.initial_row][dragger.initial_col]
+                                        capturedSquare = copy.deepcopy(game.board.grid[clicked_row][clicked_col])
                                         copyBoard.grid[clicked_row][clicked_col] = savepiece
                                         copyBoard.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
+
+                                        if capturedSquare.team == "black":
+                                            game.board.blackPieces.remove([clicked_row, clicked_col])
+
                                         copyBoard.checkChecker("black", copyBoard.grid)
                                         if copyBoard.whiteInCheck == False:
                                             game.board.grid[clicked_row][clicked_col] = game.board.grid[dragger.initial_row][dragger.initial_col]
@@ -274,9 +345,9 @@ class Main:
                                 max_key = key
                         
                         print("max pts:", max_key)
-                        print("all moves", moves)
-                        path = moves[max_key][0]
-                        print("chosen path:", path)
+                        index = int(len(moves[max_key]) / 2)
+                        path = moves[max_key][index][0]
+                        print("chosen path:", moves[max_key][index])
 
                         initial_row = path[0]
                         initial_col = path[1]
@@ -297,27 +368,9 @@ class Main:
 
                     if animating == True:
                         game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
-                        print("ANIMATING BOOLEAN ACCESSED")
                         dx = (final_x - initial_x) / 10
                         dy = (final_y - initial_y) / 10
                         
-                        """
-                        xchange = final_x - initial_x
-                        ychange = final_y - initial_y
-                        if xchange > 0:
-                            dx = 10
-                        elif xchange < 0:
-                            dx = -10
-                        elif xchange == 0:
-                            dx = 0
-                        if ychange > 0:
-                            dy = 10
-                        elif ychange < 0:
-                            dy = -10
-                        elif ychange == 0:
-                            dy = 0
-                        """
-
                         if xIncrementer != final_x or yIncrementer != final_y:
                             img = pygame.image.load(piece.image)
 
@@ -338,11 +391,18 @@ class Main:
                             xIncrementer += dx
                             yIncrementer += dy
 
-                        elif xIncrementer == final_x and yIncrementer == final_y:                        
+                        elif xIncrementer == final_x and yIncrementer == final_y:
+                            game.board.blackPieces.remove([initial_row, initial_col])    
+                            game.board.blackPieces.append([final_row, final_col])                    
                             game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
 
                             game.board.grid[final_row][final_col] = piece
-                            print("finished animation")
+                            game.board.grid[final_row][final_col].row = final_row
+                            game.board.grid[final_row][final_col].col = final_col
+
+                            if piece.piece == "king":
+                                game.board.blackKingLoc = [final_row, final_col]
+
                             piece = None
                             thread1 = None
                             animating = False
@@ -356,7 +416,93 @@ class Main:
 
 
                 elif game.board.blackInCheck == True:
-                    pass
+                    print("BLACK IN CHECK")
+
+                    blackmoves = game.board.black_move
+                    if thread1 == None and animating == False:
+                        thread1 = threading.Thread(target=findCheckMoveBlack, args=(game, blackmoves, q))
+                        thread1.start()
+
+                    if thread1.is_alive() == False and animating == False:
+                        print("accessed once")
+                        move = q.get()
+                        if move != None:
+                            initial_row = move[0]
+                            initial_col = move[1]
+                            final_row = move[2]
+                            final_col = move[3]
+
+                            initial_x = copy.copy(initial_col) * 100
+                            initial_y = copy.copy(initial_row) * 100
+                            final_x = copy.copy(final_col) * 100
+                            final_y = copy.copy(final_row) * 100
+
+                            xIncrementer = copy.copy(initial_x)
+                            yIncrementer = copy.copy(initial_y)
+
+                            piece = copy.deepcopy(game.board.grid[initial_row][initial_col])
+                            animating = True
+
+                        else:
+                            # black is in checkmate
+                            print("SPECIAL CASE ACCSESSED")
+                            piece = None
+                            thread1 = None
+                            animating = False
+                            game.board.blackInCheckmate == True
+                            game.board.loadProtections()
+                            turn = "white"
+
+                    if animating == True:
+                        print("ANIMATING")
+                        game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
+                        dx = (final_x - initial_x) / 10
+                        dy = (final_y - initial_y) / 10
+                        
+                        if xIncrementer != final_x or yIncrementer != final_y:
+                            img = pygame.image.load(piece.image)
+
+                            original_width, original_height = img.get_size()
+
+                            spacing_factor = 0.9
+
+                            # Calculates scaling factors
+                            width_scale = CELL_SIZE * spacing_factor / original_width
+                            height_scale = CELL_SIZE * spacing_factor / original_height
+                            # Use the smaller scaling factor to maintain aspect ratio
+                            scale_factor = min(width_scale, height_scale)
+                            # Scales the image
+                            img = pygame.transform.scale(img, (int(original_width * scale_factor), int(original_height * scale_factor)))
+                            img_center = (xIncrementer+50, yIncrementer+50)
+                            screen.blit(img, img.get_rect(center=img_center))
+
+                            xIncrementer += dx
+                            yIncrementer += dy
+
+                        elif xIncrementer == final_x and yIncrementer == final_y:
+                            print("PIECE DATA MOVED")
+                            print("IS IT CHECKMATE?:", game.board.blackInCheckmate)
+                            game.board.blackPieces.remove([initial_row, initial_col])    
+                            game.board.blackPieces.append([final_row, final_col])                    
+                            game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
+
+                            game.board.grid[final_row][final_col] = piece
+                            game.board.grid[final_row][final_col].row = final_row
+                            game.board.grid[final_row][final_col].col = final_col
+
+                            if piece.piece == "king":
+                                game.board.blackKingLoc = [final_row, final_col]
+
+                            piece = None
+                            thread1 = None
+                            animating = False
+                            game.board.blackInCheck == False
+                            game.board.loadProtections()
+                            turn = "white"
+                            game.board.checkChecker("black", game.board.grid)
+                            if (game.board.whiteInCheck == True):
+                                game.board.InCheckMoves("white")
+
 
                 
 

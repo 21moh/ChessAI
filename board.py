@@ -29,9 +29,12 @@ class Board:
         self.blackInCheckmate = False
         self.whiteInCheckmate = False
 
+        self.blackPieces = []
+
 
     def initialize_board(self):
         grid = self.grid
+        blackpieces = self.blackPieces
         for i in range(ROWS):
             for j in range(COLS):
                 grid[i][j] = Square(i, j)
@@ -39,6 +42,7 @@ class Board:
         
         for i in range(8):
             grid[1][i].add_piece("black", "pond", "images/blackPond.png", 1, i)
+            blackpieces.append([1, i])
             grid[6][i].add_piece("white", "pond", "images/whitePond.png", 6, i)
             grid[1][i].points = 1
             grid[6][i].points = 1
@@ -46,6 +50,8 @@ class Board:
 
         grid[0][0].add_piece("black", "rook", "images/blackRook.png", 0, 0)
         grid[0][7].add_piece("black", "rook", "images/blackRook.png", 0, 7)
+        blackpieces.append([0, 0])
+        blackpieces.append([0, 7])
         grid[7][0].add_piece("white", "rook", "images/whiteRook.png", 7, 0)
         grid[7][7].add_piece("white", "rook", "images/whiteRook.png", 7, 7)
         grid[0][0].points = 5
@@ -56,6 +62,8 @@ class Board:
 
         grid[0][1].add_piece("black", "knight", "images/blackKnight.png", 0, 1)
         grid[0][6].add_piece("black", "knight", "images/blackKnight.png", 0, 6)
+        blackpieces.append([0, 1])
+        blackpieces.append([0, 6])
         grid[7][1].add_piece("white", "knight", "images/whiteKnight.png", 7, 1)
         grid[7][6].add_piece("white", "knight", "images/whiteKnight.png", 7, 6)
         grid[0][1].points = 3
@@ -66,6 +74,8 @@ class Board:
 
         grid[0][2].add_piece("black", "bishop", "images/blackBishop.png", 0, 2)
         grid[0][5].add_piece("black", "bishop", "images/blackBishop.png", 0, 5)
+        blackpieces.append([0, 2])
+        blackpieces.append([0, 5])
         grid[7][2].add_piece("white", "bishop", "images/whiteBishop.png", 7, 2)
         grid[7][5].add_piece("white", "bishop", "images/whiteBishop.png", 7, 5)
         grid[0][2].points = 3
@@ -77,6 +87,8 @@ class Board:
 
         grid[0][3].add_piece("black", "queen", "images/blackQueen.png", 0, 3)
         grid[0][4].add_piece("black", "king", "images/blackKing.png", 0, 4)
+        blackpieces.append([0, 3])
+        blackpieces.append([0, 4])
         grid[7][3].add_piece("white", "queen", "images/whiteQueen.png", 7, 3)
         grid[7][4].add_piece("white", "king", "images/whiteKing.png", 7, 4)
         grid[0][3].points = 10
@@ -144,7 +156,21 @@ class Board:
 
                     surface.blit(img, img.get_rect(center=img_center))
 
-
+    def postAttackers(self):
+        # loads each pieces' attackers on the board
+        grid = self.grid
+        for row in range(ROWS):
+            for col in range(COLS):
+                if grid[row][col].piece != None:
+                    team = grid[row][col].team
+                    moves = self.get_moves(grid[row][col].piece, row, col, team, self.grid)
+                    for move in moves:
+                        drow = move[0]
+                        dcol = move[1]
+                        if team == "white":
+                            grid[drow][dcol].whiteAttackers.append([row, col])
+                        elif team == "black":
+                            grid[drow][dcol].whiteAttackers.append([row, col])
 
     def loadProtections(self):
         # loads all potential squares being attacked/protected on the board through self.whiteprotected and self.blackprotected in the square class
@@ -1374,34 +1400,27 @@ class Board:
 
 
         elif (defending_team == "black"):
-            self.black_movable = [] # holds Square Object
+            #self.black_movable = [] # holds Square Object
             self.black_move = []   # holds corresponding move as a list --> index of move matches index of movable_pieces
             if self.blackInCheck == True:
                 for row in range(ROWS):
                     for col in range(COLS):
                         if self.grid[row][col].team == "black":
                             piece_moves = self.get_moves(self.grid[row][col].piece, row, col, "black", self.grid)
-                            piece = self.grid[row][col].piece
+                            irow = row
+                            icol = col
                             for move in piece_moves:
+                                frow = move[0]
+                                fcol = move[1]
                                 copygrid = copy.deepcopy(self.grid)
-                                copykingloc = copy.deepcopy(self.blackKingLoc)
-                                self.loadProtections2(copygrid)
-                                #print("moving piece:", self.grid[row][col].piece, "from", [row],[col],"to square", move)
-                                save_initial = copy.deepcopy(copygrid[row][col])
-                                copygrid[move[0]][move[1]] = save_initial
-                                copygrid[row][col] = Square(row, col)
-                                copygrid[move[0]][move[1]].row = move[0]
-                                copygrid[move[0]][move[1]].col = move[1]
-                                self.loadProtections2(copygrid)
-                                if piece == "king":
-                                    copykingloc = [move[0], move[1]]
-                                if copygrid[copykingloc[0]][copykingloc[1]].whiteprotected == False:
-                                    self.black_movable.append(save_initial)
-                                    self.black_move.append([move[0], move[1]])
-
+                                copyPiece = copy.deepcopy(self.grid[irow][icol])
+                                copygrid[irow][icol] = Square(irow, icol)
+                                copygrid[frow][fcol] = copyPiece
+                                if copyPiece.piece == "king":
+                                    pass
             
-            if len(self.black_movable) == 0:
-                self.blackInCheckmate = True
+            #if len(self.black_movable) == 0:
+            #    self.blackInCheckmate = True
 
 
     

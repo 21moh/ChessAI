@@ -14,6 +14,11 @@ class Square:
         self.blackprotected = False
         self.points = 0
 
+        self.whiteAttackers = []
+        self.blackAttackers = []
+
+        
+
 
     def setPoint(self):
         if (self.piece == "pond"):

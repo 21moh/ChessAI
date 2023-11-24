@@ -12,3 +12,6 @@ NEW
 White king moves not providing all available moves
 For black move finder, put all black pieces as Square Objects in a list and iterate through them all instead of iterating through the entire board  (optimization)
 
+
+Fix checking system and king moves
+
