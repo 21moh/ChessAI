@@ -126,8 +126,6 @@ class Main:
                 Board = copy.deepcopy(game.board)
                 capturePts = 0
                 grid = Board.grid
-                irow = move[0]
-                icol = move[1]
                 frow = move[2]
                 fcol = move[3]
                 final = copy.deepcopy(grid[frow][fcol])
@@ -144,28 +142,30 @@ class Main:
         def inCheckMoves(game, defending_team):     # finds all possible moves for the team in check
             if defending_team == "white":
                 if game.board.whiteInCheck == True:
+                    game.board.loadProtections()
                     whiteCheckMoves = []   # holds corresponding move as a list --> index of move matches index of movable_pieces
-                    print("CHECK FUNCTION ACCESSED")
                     for row in range(ROWS):
                         for col in range(COLS):
                             if game.board.grid[row][col].team == "white":
-                                game.board.loadProtections()
                                 piece_moves = game.board.get_moves(game.board.grid[row][col].piece, row, col, "white", game.board.grid)
                                 for move in piece_moves:
                                     
                                     frow = move[0]
                                     fcol = move[1]
                                     Board = copy.deepcopy(game.board)
-                                    grid = Board.grid
-                                    savePiece = copy.deepcopy(grid[row][col])
-                                    grid[row][col] = Square(row, col)
-                                    grid[frow][fcol] = savePiece
+                                    savePiece = copy.deepcopy(Board.grid[row][col])
+                                    Board.grid[frow][fcol] = savePiece
+                                    Board.grid[row][col] = Square(row, col)
+                                    
                                     if savePiece.piece == "king":
                                         Board.whiteKingLoc = [frow, fcol]
                                     krow = Board.whiteKingLoc[0]
                                     kcol = Board.whiteKingLoc[1]
                                     Board.loadProtections()
-                                    if Board.grid[krow][kcol].blackprotected == False:
+                                    
+                                    
+                                    incheck = Board.checkChecker("white", Board.grid)
+                                    if incheck == False:
                                         whiteCheckMoves.append([row, col, frow, fcol])
                     game.board.printProtections()
                     print("possible moves:", whiteCheckMoves)
@@ -192,7 +192,9 @@ class Main:
                                         Board.blackKingLoc = [frow, fcol]
                                     krow = Board.blackKingLoc[0]
                                     kcol = Board.blackKingLoc[1]
-                                    if grid[krow][kcol].whiteprotected == False:
+                                    #if grid[krow][kcol].whiteprotected == False:
+                                    incheck = Board.checkChecker("black", Board.grid)
+                                    if incheck == False:
                                         blackCheckMoves.append([row, col, frow, fcol])
                     return blackCheckMoves
                 
@@ -229,6 +231,7 @@ class Main:
             
 
             if (self.game.board.blackInCheckmate == True):
+                #img = pygame.image.load("images/white wins.png")
                 img = pygame.image.load("images/white wins.png")
                 screen.blit(img, (-50, 100))
                 for event in pygame.event.get():
@@ -369,7 +372,7 @@ class Main:
                             dragger.object = None
                             game.board.loadProtections()
                             #if game.board.blackInCheck == True:
-                            #    inCheckMoves(game, "black")
+                                #inCheckMoves(game, "black")
 
                             
 
@@ -396,10 +399,11 @@ class Main:
                         
                         if len(moves) == 1:
                             index = 1
-                        if len(moves) == 0:
+                        if len(moves) == 0 or moves == None:
                             index = 0
                         else:
                             index = int(len(moves[max_key]) / 2)
+                        print("moves:", moves)
                         path = moves[max_key][index][0]
                         print("chosen path:", moves[max_key][index])
 
@@ -564,9 +568,7 @@ class Main:
                             game.board.loadProtections()
                             turn = "white"
                             checkPassed = False
-                            #game.board.checkChecker("white", game.board.grid)
-                            #if (game.board.whiteInCheck == True):
-                            #    game.board.InCheckMoves("white")
+                            game.board.checkChecker("white", game.board.grid)
 
 
                 
@@ -580,7 +582,7 @@ class Main:
 
                 game.board.checkChecker("white", game.board.grid)
                 if game.board.whiteInCheck == True:
-                    whiteincheckmate = inCheckMoves("white")
+                    whiteincheckmate = inCheckMoves(game, "white")
                     if len(whiteincheckmate) == 0:
                         game.board.whiteInCheckmate == True
 

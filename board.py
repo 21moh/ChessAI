@@ -253,7 +253,7 @@ class Board:
 
         print()
         
-        
+
     def checkChecker(self, defending_team, grid):
 
         if (defending_team == "black"):     # for black
@@ -902,11 +902,11 @@ class Board:
                         moves.append([row+1, col])
                     
                 if (col < COLS-1):
-                    if (grid[row][col-1].team == "white" or grid[row][col-1].blackprotected == False):
+                    if (grid[row][col+1].team == "white" or grid[row][col+1].blackprotected == False):
                         moves.append([row, col+1])
 
                 if (row > 0 and col < COLS-1):
-                    if (grid[row][col-1].team == "white" or grid[row][col-1].blackprotected == False):
+                    if (grid[row-1][col+1].team == "white" or grid[row-1][col+1].blackprotected == False):
                         moves.append([row-1, col+1])
 
                 if (row < ROWS-1 and col > 0):
@@ -932,11 +932,11 @@ class Board:
                 
                 if (row < ROWS-1):
                     if (grid[row-1][col].team == "black" or grid[row-1][col].whiteprotected == False):
-                        moves.append([row+1, col])
+                        moves.append([row-1, col])
                     
                 if (col < COLS-1):
                     if (grid[row][col-1].team == "black" or grid[row][col-1].whiteprotected == False):
-                        moves.append([row, col+1])
+                        moves.append([row, col-1])
 
                 if (row > 0 and col < COLS-1):
                     if (grid[row-1][col+1].team == "black" or grid[row-1][col+1].whiteprotected == False):
@@ -1389,11 +1389,12 @@ class Board:
                 if (row > 0 and col > 0):
                     if (grid[row-1][col-1].piece == None or (grid[row-1][col-1].team == "black" and grid[row-1][col-1].blackprotected == False)):
                         moves.append([row-1, col-1])
-                    if (grid[row-1][col].piece == None or (grid[row-1][col].team == "black" and grid[row][col].blackprotected == False)):
+                if row > 0:   
+                    if (grid[row-1][col].piece == None or (grid[row-1][col].team == "black" and grid[row-1][col].blackprotected == False)):
                         moves.append([row-1, col])
                     
                 if row >= 0 and col >= 1:
-                    if (grid[row][col-1].piece == None or (grid[row][col-1].team == "black" and grid[row][col].blackprotected == False)):
+                    if (grid[row][col-1].piece == None or (grid[row][col-1].team == "black" and grid[row][col-1].blackprotected == False)):
                         moves.append([row, col-1])
                 
                 if (row < ROWS-1 and col < COLS-1):

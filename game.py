@@ -21,9 +21,9 @@ class Game:
                 x = col * CELL_SIZE
                 y = row * CELL_SIZE
                 if (row + col) % 2 == 0:
-                    color = (234, 235, 200) #white      # (240, 217, 181)
+                    color = (232, 235, 239) # blueish white    # (240, 217, 181)   # (234, 235, 200) #greenish white    (232, 235, 239) # blueish white
                 else:
-                    color = (119, 154, 88)  #green      # (181, 136, 99)
+                    color = (125, 135, 150)  # blueish grey      # (181, 136, 99)    (119, 154, 88)  #green     # blueish grey
                 pygame.draw.rect(screen, color, (x, y, CELL_SIZE, CELL_SIZE))
 
 
