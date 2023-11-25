@@ -33,9 +33,10 @@ class Main:
         #################################################################################################################################
         # Move Generator Section for Black AI
         # The function is placed outside the while loop because each while loop generates the graphics and the current position of all the pieces on the board. 
-        # Thus, any delay to the main while loop's next iteration would cause a dropped white pieces to freeze due to the sequential algorithm for black finding its move.
-        # Thus, threading is used so the the while loop can continue iterating without delay while the 'findMoveBlack' algorithm finds the best move for black.
+        # Thus, any delay to the main while loop's next iteration would cause a freeze to the graphics due to the algorithm's time to find black's its move.
+        # Thus, threading is used so the the while loop can continue iterating and generating the graphics while the 'findMoveBlack' algorithm finds the best move for black.
         # When the findMoveBlack algorithm does finds the best move, the main while loop updates the board with the move found.
+        # The larger the depth base case value of the algorithm, the more moves it plans ahead thus the longer the algorithm will take to complete
     
         
         q = queue.Queue()
@@ -70,6 +71,13 @@ class Main:
                                 Board2 = copy.deepcopy(Board)
                                 tempPts = copy.copy(pts)
                                 # check if piece is being attacked aka add defensive conditionals
+                                
+                                """
+                                if len(grid[row][col].whiteAttackers) >= 1:
+                                    if grid[move[0]][move[1]].points == grid[row][col].points:
+                                        tempPts += grid[move[0]][move[1]].points
+                                        tempPts += 1
+                                """
 
                                 if grid[move[0]][move[1]].whiteprotected == True:
                                     tempPts -= grid[row][col].points
@@ -86,15 +94,8 @@ class Main:
                                 Moves = copy.deepcopy(moves)
                                 Moves.append([row, col, move[0], move[1]])
                                 copyDepth = copy.deepcopy(depth)
-                                #if Board2.grid[move[0]][move[1]].team == "white":
-                                    #print("captured white hypothetical piece:", Board2.grid[move[0]][move[1]].piece, "| points gained from piece:", Board2.grid[move[0]][move[1]].points)
-                                    #print("moveset:", Moves)
-                                    #print("points gained", pts, "| in depth:", depth)
-
-                                #print("Recursion moves:", Moves)
 
                                 save = copy.deepcopy(Board2.grid[row][col])
-                                #print("all black piece locations:", Board2.blackPieces)
                                 Board2.blackPieces.remove([row, col])
                                 Board2.blackPieces.append([move[0], move[1]])
                                 if Board2.grid[move[0]][move[1]].whiteprotected == True:
@@ -113,7 +114,6 @@ class Main:
                                     bestMove(Board2.grid, Board2, copyDepth, allmoves, tempPts, Moves)
 
             bestMove(game.board.grid, game.board, 0, allmoves, 0, [])
-            #game.board.printProtections()
             q.put(allmoves)
 
 
@@ -121,7 +121,6 @@ class Main:
             bestMove = None
             bestPoints = 0
             grid = game.board.grid
-            #print("all possible moves in black check:", moves)
             for move in moves:
                 Board = copy.deepcopy(game.board)
                 capturePts = 0
@@ -133,9 +132,6 @@ class Main:
                     capturePts += final.points
                 if capturePts >= bestPoints:
                     bestMove = move
-            #print("current protections:")
-            #game.board.printProtections()
-            #print("best move from findcheckMove:", bestMove)
             q.put(bestMove)
                 
 
@@ -159,18 +155,11 @@ class Main:
                                     
                                     if savePiece.piece == "king":
                                         Board.whiteKingLoc = [frow, fcol]
-                                    krow = Board.whiteKingLoc[0]
-                                    kcol = Board.whiteKingLoc[1]
                                     Board.loadProtections()
-                                    
-                                    
                                     incheck = Board.checkChecker("white", Board.grid)
                                     if incheck == False:
                                         whiteCheckMoves.append([row, col, frow, fcol])
-                    #game.board.printProtections()
-                    #print("possible moves:", whiteCheckMoves)
                     return whiteCheckMoves
-
 
             elif (defending_team == "black"):
                 if game.board.blackInCheck == True:
@@ -190,9 +179,6 @@ class Main:
                                     Board.loadProtections()
                                     if savePiece.piece == "king":
                                         Board.blackKingLoc = [frow, fcol]
-                                    krow = Board.blackKingLoc[0]
-                                    kcol = Board.blackKingLoc[1]
-                                    #if grid[krow][kcol].whiteprotected == False:
                                     incheck = Board.checkChecker("black", Board.grid)
                                     if incheck == False:
                                         blackCheckMoves.append([row, col, frow, fcol])
@@ -231,7 +217,6 @@ class Main:
             
 
             if (self.game.board.blackInCheckmate == True):
-                #img = pygame.image.load("images/white wins.png")
                 img = pygame.image.load("images/white wins.png")
                 screen.blit(img, (-50, 100))
                 for event in pygame.event.get():
@@ -466,13 +451,8 @@ class Main:
                             animating = False
                             game.board.loadProtections()
                             turn = "white"
-                            #game.board.checkChecker("white", game.board.grid)
-                            #if (game.board.whiteInCheck == True):
-                            #    game.board.InCheckMoves("white")
-                        
-                
-
-
+                            
+            
                 elif game.board.blackInCheck == True:
                     if checkPassed == False:
                         blackmoves = inCheckMoves(game, "black")
