@@ -113,7 +113,7 @@ class Main:
                                     bestMove(Board2.grid, Board2, copyDepth, allmoves, tempPts, Moves)
 
             bestMove(game.board.grid, game.board, 0, allmoves, 0, [])
-            game.board.printProtections()
+            #game.board.printProtections()
             q.put(allmoves)
 
 
@@ -121,7 +121,7 @@ class Main:
             bestMove = None
             bestPoints = 0
             grid = game.board.grid
-            print("all possible moves in black check:", moves)
+            #print("all possible moves in black check:", moves)
             for move in moves:
                 Board = copy.deepcopy(game.board)
                 capturePts = 0
@@ -133,9 +133,9 @@ class Main:
                     capturePts += final.points
                 if capturePts >= bestPoints:
                     bestMove = move
-            print("current protections:")
-            game.board.printProtections()
-            print("best move from findcheckMove:", bestMove)
+            #print("current protections:")
+            #game.board.printProtections()
+            #print("best move from findcheckMove:", bestMove)
             q.put(bestMove)
                 
 
@@ -167,8 +167,8 @@ class Main:
                                     incheck = Board.checkChecker("white", Board.grid)
                                     if incheck == False:
                                         whiteCheckMoves.append([row, col, frow, fcol])
-                    game.board.printProtections()
-                    print("possible moves:", whiteCheckMoves)
+                    #game.board.printProtections()
+                    #print("possible moves:", whiteCheckMoves)
                     return whiteCheckMoves
 
 
@@ -320,8 +320,8 @@ class Main:
                                                 game.board.grid[clicked_row][clicked_col] = Square(clicked_row, clicked_col)
                                                 game.board.grid[clicked_row][clicked_col].add_piece("white", "queen", "images/whiteQueen.png", clicked_row, clicked_col)
                                                 game.board.grid[dragger.initial_row][dragger.initial_col] = Square(dragger.initial_row, dragger.initial_col)
-                                                if capturedSquare.team == "black":
-                                                    game.board.blackPieces.remove([clicked_row, clicked_col])
+                                                #if capturedSquare.team == "black":
+                                                #    game.board.blackPieces.remove([clicked_row, clicked_col])
                                                 game.board.checkChecker("black", game.board.grid)
                                                 turn = "black"
 
@@ -395,7 +395,7 @@ class Main:
                             if key > max_key:
                                 max_key = key
                         
-                        print("max pts:", max_key)
+                        #print("max pts:", max_key)
                         
                         if len(moves) == 1:
                             index = 1
@@ -403,9 +403,9 @@ class Main:
                             index = 0
                         else:
                             index = int(len(moves[max_key]) / 2)
-                        print("moves:", moves)
+                        #print("moves:", moves)
                         path = moves[max_key][index][0]
-                        print("chosen path:", moves[max_key][index])
+                        #print("chosen path:", moves[max_key][index])
 
                         initial_row = path[0]
                         initial_col = path[1]
@@ -547,8 +547,8 @@ class Main:
                             yIncrementer += dy
 
                         elif xIncrementer == final_x and yIncrementer == final_y:
-                            print("PIECE DATA MOVED")
-                            print("IS IT CHECKMATE?:", game.board.blackInCheckmate)
+                            #print("piece data moved")
+                            #print("checkmate status:", game.board.blackInCheckmate)
                             game.board.blackPieces.remove([initial_row, initial_col])    
                             game.board.blackPieces.append([final_row, final_col])                    
                             game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
@@ -569,16 +569,6 @@ class Main:
                             turn = "white"
                             checkPassed = False
                             game.board.checkChecker("white", game.board.grid)
-
-
-                
-
-
-                
-                    
-
-                    
-                    
 
                 game.board.checkChecker("white", game.board.grid)
                 if game.board.whiteInCheck == True:

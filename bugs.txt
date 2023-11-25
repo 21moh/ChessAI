@@ -1,5 +1,3 @@
 bugs/implementations to do:
 
-pond to queen promotion for black needs to be implemented
-
-when white in check, white can still move to other squares
+when pond goes to Queen game crashes at line 324
