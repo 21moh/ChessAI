@@ -474,12 +474,9 @@ class Main:
 
 
                 elif game.board.blackInCheck == True:
-                    print("BLACK IN CHECK")
                     if checkPassed == False:
                         blackmoves = inCheckMoves(game, "black")
-                        print("blackmoves:", blackmoves)
                         if len(blackmoves) == 0:
-                            print("BLACK IN CHECKMATE")
                             game.board.blackInCheckmate = True
                             turn = "white"
                         checkPassed = True
@@ -490,9 +487,7 @@ class Main:
 
                     if  animating == False and game.board.blackInCheckmate == False and checkPassed == True:
                         if thread1.is_alive() == False:
-                            print("accessed once")
                             move = q.get()
-                            print("move:", move)
                             if move != None:
                                 initial_row = move[0]
                                 initial_col = move[1]
@@ -510,9 +505,8 @@ class Main:
                                 piece = copy.deepcopy(game.board.grid[initial_row][initial_col])
                                 animating = True
 
-                            else:
+                            else: 
                                 # black is in checkmate
-                                print("SPECIAL CASE ACCSESSED, moves are:", move)
                                 piece = None
                                 thread1 = None
                                 animating = False
@@ -521,7 +515,6 @@ class Main:
                                 turn = "white"
 
                     if animating == True:
-                        print("ANIMATING")
                         game.board.grid[initial_row][initial_col] = Square(initial_row, initial_col)
                         dx = (final_x - initial_x) / 10
                         dy = (final_y - initial_y) / 10

@@ -112,11 +112,11 @@ class Board:
             
         for i in range(len(moves)):
             if (grid[moves[i][0]][moves[i][1]].piece == None):  # No piece in location
-                img = pygame.image.load("images/attack.png")
+                img = pygame.image.load("images/attack2.png")
 
                 original_width, original_height = img.get_size()
 
-                spacing_factor = 0.8
+                spacing_factor = 0.6
 
                 # Calculates scaling factors
                 width_scale = CELL_SIZE * spacing_factor / original_width
@@ -133,7 +133,7 @@ class Board:
 
             elif (grid[moves[i][0]][moves[i][1]].team != None):
                 if (turn != grid[moves[i][0]][moves[i][1]].team): # Enemy piece in location
-                    img = pygame.image.load("images/cap_attack.png")
+                    img = pygame.image.load("images/cap_attack2.png")
 
                     original_width, original_height = img.get_size()
 
