@@ -1,3 +1,5 @@
 bugs/implementations to do:
 
-when pond goes to Queen game crashes at line 324
+-black pond to Queen promotion
+-add castling to AI moveset
+-add more defensive strategy to AI
