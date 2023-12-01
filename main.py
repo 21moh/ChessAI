@@ -310,19 +310,19 @@ class Main:
                                             
                                                 game.board.checkChecker("black", game.board.grid)
                                                 if game.board.blackInCheck == True:
-                                                    pygame.mixer.music.load("check.mp3")
+                                                    pygame.mixer.music.load("sounds\check.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
                                                     pygame.mixer.music.stop()
                                                 elif capturedSquare.team == "black":
-                                                    pygame.mixer.music.load("capture.mp3")
+                                                    pygame.mixer.music.load("sounds\capture.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
                                                     pygame.mixer.music.stop()
                                                 else:
-                                                    pygame.mixer.music.load("move.mp3")
+                                                    pygame.mixer.music.load("sounds\move.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
@@ -346,19 +346,19 @@ class Main:
                                                     print("white king moved")
                                                 game.board.checkChecker("black", game.board.grid)
                                                 if game.board.blackInCheck == True:
-                                                    pygame.mixer.music.load("check.mp3")
+                                                    pygame.mixer.music.load("sounds\check.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
                                                     pygame.mixer.music.stop()
                                                 elif capturedSquare.team == "black":
-                                                    pygame.mixer.music.load("capture.mp3")
+                                                    pygame.mixer.music.load("sounds\capture.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
                                                     pygame.mixer.music.stop()
                                                 else:
-                                                    pygame.mixer.music.load("move.mp3")
+                                                    pygame.mixer.music.load("sounds\move.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
@@ -390,19 +390,19 @@ class Main:
                                                 if savepiece.piece == "king":
                                                     game.board.whiteKingLoc = [clicked_row, clicked_col]
                                                 if game.board.blackInCheck == True:
-                                                    pygame.mixer.music.load("check.mp3")
+                                                    pygame.mixer.music.load("sounds\check.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
                                                     pygame.mixer.music.stop()
                                                 elif capturedSquare.team == "black":
-                                                    pygame.mixer.music.load("capture.mp3")
+                                                    pygame.mixer.music.load("sounds\capture.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
                                                     pygame.mixer.music.stop()
                                                 else:
-                                                    pygame.mixer.music.load("move.mp3")
+                                                    pygame.mixer.music.load("sounds\move.mp3")
                                                     pygame.mixer.music.play()
                                                     clock = pygame.time.Clock()
                                                     clock.tick(10)
@@ -492,19 +492,7 @@ class Main:
 
                         elif xIncrementer == final_x and yIncrementer == final_y:
                             
-                            if game.board.grid[final_row][final_col].team == "white":
-                                pygame.mixer.music.load("capture.mp3")
-                                pygame.mixer.music.play()
-                                clock = pygame.time.Clock()
-                                clock.tick(10)
-                                pygame.mixer.music.stop()
-                            
-                            elif game.board.grid[final_row][final_col].piece == None:
-                                pygame.mixer.music.load("move.mp3")
-                                pygame.mixer.music.play()
-                                clock = pygame.time.Clock()
-                                clock.tick(10)
-                                pygame.mixer.music.stop()
+                            capturedSquare = copy.deepcopy(game.board.grid[final_row][final_col])
                             
                             game.board.blackPieces.remove([initial_row, initial_col])    
                             game.board.blackPieces.append([final_row, final_col])                    
@@ -520,21 +508,21 @@ class Main:
                             game.board.loadProtections()
                             game.board.checkChecker("white", game.board.grid)
                             if game.board.whiteInCheck == True:
-                                pygame.mixer.music.load("check.mp3")
+                                pygame.mixer.music.load("sounds\check.mp3")
                                 pygame.mixer.music.play()
                                 clock = pygame.time.Clock()
                                 clock.tick(10)
                                 pygame.mixer.music.stop()
 
-                            if game.board.grid[final_row][final_col].team == "white":
-                                pygame.mixer.music.load("capture.mp3")
+                            if capturedSquare.team == "white":
+                                pygame.mixer.music.load("sounds\capture.mp3")
                                 pygame.mixer.music.play()
                                 clock = pygame.time.Clock()
                                 clock.tick(10)
                                 pygame.mixer.music.stop()
                         
-                            elif game.board.grid[final_row][final_col].piece == None:
-                                pygame.mixer.music.load("move.mp3")
+                            elif capturedSquare.piece == None:
+                                pygame.mixer.music.load("sounds\move.mp3")
                                 pygame.mixer.music.play()
                                 clock = pygame.time.Clock()
                                 clock.tick(10)
@@ -555,7 +543,7 @@ class Main:
                         blackmoves = inCheckMoves(game, "black")
                         if len(blackmoves) == 0:
                             game.board.blackInCheckmate = True
-                            playsound("game-end.mp3")
+                            playsound("sounds\game-end.mp3")
                             turn = "white"
                         checkPassed = True
 
@@ -635,21 +623,21 @@ class Main:
                             game.board.loadProtections()
                             game.board.checkChecker("white", game.board.grid)
                             if game.board.whiteInCheck == True:
-                                pygame.mixer.music.load("check.mp3")
+                                pygame.mixer.music.load("sounds\check.mp3")
                                 pygame.mixer.music.play()
                                 clock = pygame.time.Clock()
                                 clock.tick(10)
                                 pygame.mixer.music.stop()
 
                             if capturePiece.team == "white":
-                                pygame.mixer.music.load("capture.mp3")
+                                pygame.mixer.music.load("sounds\capture.mp3")
                                 pygame.mixer.music.play()
                                 clock = pygame.time.Clock()
                                 clock.tick(10)
                                 pygame.mixer.music.stop()
                         
                             elif capturePiece.piece == None:
-                                pygame.mixer.music.load("move.mp3")
+                                pygame.mixer.music.load("sounds\move.mp3")
                                 pygame.mixer.music.play()
                                 clock = pygame.time.Clock()
                                 clock.tick(10)
