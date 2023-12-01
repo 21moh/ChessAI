@@ -369,7 +369,7 @@ class Main:
                                         whitemoves = inCheckMoves(game, "white")
                                         if len(whitemoves) == 0:
                                             game.board.whiteInCheckmate = True
-                                            playsound("game-end.mp3")
+                                            playsound("sounds\game-end.mp3")
 
                                         else:
                                             ir = dragger.initial_row
