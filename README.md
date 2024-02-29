@@ -1,6 +1,6 @@
 # ChessAI
 
-![Chess AI](images/ChessGif.gif)
+![Chess AI](images/chessGif.gif)
 
 Usage:<br>
 git clone \<this-repo\> <br>
