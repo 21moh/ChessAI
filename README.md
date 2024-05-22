@@ -1,7 +1,7 @@
 # ChessAI
 
 <div style="text-align: center;">
-  <img src="images/chessGif.gif" alt="Chess AI" style="width: 2000px;">
+  <img src="images/chessGif.gif" alt="Chess AI" style="width: 100%; max-width: 2000px;">
 </div>
   The game utilizes pygame for the interface with a multitude of classes in order to create a structure for the dragger, 
   updating piece locations, as well as piece dragging motion and animations. The class hierchy is as follows: main.py which includes board.py and game.py, board.py includes square.py, and game.py includes dragger.py. Board and square.py act as the "backend" of the game, which holds data throughout the board as well as data tranfers from one place on the board to another. This is done firstly through Board.py where the 8x8 board is initialized through the initialization of the board object in main, where each index of the Board is a square object from square.py. Each square object then holds piece information including piece name, team, image url, and possible attackers towards the square (for the AI). This together acts with the "front-end" of the game, game.py and dragger.py which are both responsible for the drag and drop graphics and piece display, which is done by iterating through the data board and displaying each individual square one at a time with its corresponding square color through certain calculations. 
