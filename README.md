@@ -1,7 +1,7 @@
 # ChessAI
 
 <div style="text-align: center;">
-  <img src="images/chessGif.gif" alt="Chess AI" style="width: 150%; max-width: 1200;">
+  <img src="images/chessGif.gif" alt="Chess AI" style="width: 200%; max-width: 2000;">
 </div>
 
   The game utilizes pygame for the interface with a multitude of classes in order to create a structure for the dragger, updating piece locations, as well as piece dragging motion and
