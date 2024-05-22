@@ -1,4 +1,4 @@
-# ChessAI
+# ♕ChessAI♕
 
 <div style="text-align: center;">
   <img src="images/chessGif.gif" alt="Chess AI" style="width: 100%; max-width: 2000px;">
@@ -18,4 +18,4 @@ This is mainly done in game.py, where the board is iterated over again checking 
 git clone \<this-repo\> <br>
 pip install --upgrade wheel <br>
 pip install playsound <br>
-run main.py  \*under the ChessAI folder\* <br>
+run main.py ♕<br>
