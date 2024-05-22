@@ -13,7 +13,7 @@ This is mainly done in game.py, where the board is iterated over again checking 
 
   This together makes my chess project!
 
-#Usage:
+# Usage:
 git clone \<this-repo\> <br>
 pip install --upgrade wheel <br>
 pip install playsound <br>
