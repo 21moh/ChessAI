@@ -16,6 +16,7 @@ This is mainly done in game.py, where the board is iterated over again checking 
 
 # Usage:
 git clone \<this-repo\> <br>
+pip install pygame <br>
 pip install --upgrade wheel <br>
 pip install playsound <br>
 run main.py ♕<br>
